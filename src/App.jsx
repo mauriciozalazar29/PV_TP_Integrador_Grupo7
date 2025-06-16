@@ -3,6 +3,7 @@ import Home from './views/Home';
 import Favorites from './views/Favorites';
 import ProductDetail from './views/ProductDetail';
 import NavBar from './components/NavBar';
+import Footer from './components/Footer';
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/detail/:id" element={<ProductDetail />} />
       </Routes>
+      <Footer />
     </Router>
   );
 };
