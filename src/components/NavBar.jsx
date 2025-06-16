@@ -1,36 +1,23 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const NavBar = () => {
+  const cart = useSelector(state => state.cart);
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
-    <nav className="bg-gray-900 text-white px-6 py-4 flex items-center justify-between shadow-md">
-      <Link to="/" className="text-2xl font-bold text-blue-400 hover:text-blue-300">
-        🛒 Mi Tienda
-      </Link>
-      <div className="flex gap-4">
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            isActive ? 'text-blue-300 font-semibold' : 'hover:text-blue-300'
-          }
-        >
-          Inicio
-        </NavLink>
-        <NavLink
-          to="/favorites"
-          className={({ isActive }) =>
-            isActive ? 'text-blue-300 font-semibold' : 'hover:text-blue-300'
-          }
-        >
-          Favoritos
-        </NavLink>
-        <NavLink
-          to="/create"
-          className={({ isActive }) =>
-            isActive ? 'text-blue-300 font-semibold' : 'hover:text-blue-300'
-          }
-        >
-          Crear Producto
-        </NavLink>
+    <nav className="flex justify-between items-center p-4 bg-gray-800 text-white">
+      <div className="flex gap-6 text-lg font-semibold">
+        <Link to="/">Inicio</Link>
+        <Link to="/favorites">Favoritos</Link>
+        <Link to="/cart" className="relative">
+          🛒 Carrito
+          {totalItems > 0 && (
+            <span className="ml-1 inline-block bg-red-600 text-xs px-2 py-0.5 rounded-full">
+              {totalItems}
+            </span>
+          )}
+        </Link>
       </div>
     </nav>
   );
