@@ -9,11 +9,13 @@ const App = () => {
   return (
     <Router>
       <NavBar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/favorites" element={<Favorites />} />
-        <Route path="/detail/:id" element={<ProductDetail />} />
-      </Routes>
+      <main className="pt-1 min-h-screen">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/detail/:id" element={<ProductDetail />} />
+        </Routes>
+      </main>
       <Footer />
     </Router>
   );
