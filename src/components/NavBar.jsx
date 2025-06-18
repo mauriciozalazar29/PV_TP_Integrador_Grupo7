@@ -10,6 +10,7 @@ const NavBar = () => {
       <div className="flex gap-6 text-lg font-semibold">
         <Link to="/">Inicio</Link>
         <Link to="/favorites">Favoritos</Link>
+        <Link to="/create">Crear Productos</Link>
         <Link to="/cart" className="relative">
           🛒 Carrito
           {totalItems > 0 && (

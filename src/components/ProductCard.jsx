@@ -7,26 +7,47 @@ const ProductCard = ({ product }) => {
   const favorites = useSelector(state => state.favorites);
   const isFav = favorites.includes(product.id);
 
-  const rating = product.rating?.rate ?? 4.2;
-
   return (
-    <div className="border rounded-xl p-4 shadow hover:shadow-lg">
-      <img src={product.image} alt={product.title} className="w-full h-40 object-contain" />
-      <h2 className="text-lg font-semibold mt-2">{product.title}</h2>
-      <p className="text-gray-600">${product.price}</p>
-      <p className="text-sm mt-1">
-        {[...Array(5)].map((_, i) => (
-          <span key={i}>{i < Math.floor(rating) ? '⭐' : '☆'}</span>
-        ))} ({rating.toFixed(1)})
-      </p>
-      <div className="flex justify-between mt-2">
-        <Link to={`/detail/${product.id}`} className="text-blue-500 hover:underline">
-          Ver más
-        </Link>
-        <button onClick={() => dispatch(toggleFavorite(product.id))}>
+    <div className="border rounded-xl shadow p-4 bg-white flex flex-col justify-between">
+      <img
+        src={product.image}
+        alt={product.title}
+        className="w-full h-48 object-contain mb-2"
+      />
+
+      <h3 className="text-lg font-semibold">{product.title}</h3>
+      <p className="text-gray-600 text-sm mb-2">{product.category}</p>
+      <p className="text-blue-600 font-bold">${product.price}</p>
+      {product.stock !== undefined && (
+        <p className="text-sm text-gray-500">Stock: {product.stock}</p>
+      )}
+      {product.rating?.rate && (
+        <p className="text-sm text-yellow-600">⭐ {product.rating.rate.toFixed(1)}</p>
+      )}
+
+      <div className="mt-3 flex justify-between items-center">
+        <button
+          onClick={() => dispatch(toggleFavorite(product.id))}
+          className="text-xl"
+          title="Agregar a favoritos"
+        >
           {isFav ? '💖' : '🤍'}
         </button>
+
+        <Link
+          to={`/product/${product.id}`}
+          className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+        >
+          Ver más
+        </Link>
       </div>
+
+      <Link
+        to={`/edit/${product.id}`}
+        className="mt-2 text-xs text-blue-600 hover:underline"
+      >
+        Editar producto
+      </Link>
     </div>
   );
 };
