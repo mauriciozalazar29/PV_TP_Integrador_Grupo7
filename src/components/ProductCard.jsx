@@ -26,12 +26,11 @@ const ProductCard = ({ product }) => {
 
   return (
     <div 
-      className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 w-full max-w-sm mx-auto flex flex-col h-full cursor-pointer border border-gray-100 hover:border-gray-200"
+      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 w-full mx-auto flex flex-col h-full cursor-pointer border border-gray-100 hover:border-gray-200"
       onClick={handleCardClick}
     >
-      
-      <div className="relative" style={{ height: '240px' }}>
-        <div className="absolute inset-0 bg-gray-50 flex items-center justify-center p-6">
+      <div className="relative" style={{ height: '200px' }}>
+        <div className="absolute inset-0 bg-gray-50 flex items-center justify-center p-4">
           <img
             src={product.image}
             alt={product.title}
@@ -45,70 +44,50 @@ const ProductCard = ({ product }) => {
       
         <button
           onClick={handleFavoriteClick}
-          className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm p-2.5 rounded-full shadow-sm hover:scale-110 transition-all z-10"
+          className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm hover:scale-110 transition-all z-10"
           aria-label={isFav ? "Quitar de favoritos" : "Agregar a favoritos"}
         >
           {isFav ? (
-            <FaHeart className="text-red-500 text-base" />
+            <FaHeart className="text-red-500 text-sm" />
           ) : (
-            <FiHeart className="text-gray-600 hover:text-red-400 text-base" />
+            <FiHeart className="text-gray-600 hover:text-red-400 text-sm" />
           )}
         </button>
-
-        <div className="absolute top-3 left-3 flex flex-col items-start gap-1 z-10">
-          {product.isNew && (
-            <span className="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full">
-              Nuevo
-            </span>
-          )}
-          {product.discount && (
-            <span className="bg-red-100 text-red-800 text-xs px-2.5 py-1 rounded-full">
-              -{product.discount}%
-            </span>
-          )}
-        </div>
       </div>
 
-      <div className="p-5 flex flex-col flex-grow">
-        <div className="mb-1.5">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-            {product.brand}
-          </span>
-        </div>
+      <div className="p-4 flex flex-col flex-grow">
+        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          {product.brand}
+        </span>
 
-        <h3 className="text-base font-medium text-gray-900 line-clamp-2 leading-tight mb-3">
+        <h3 className="text-[15px] font-medium text-gray-900 line-clamp-2 mt-2 leading-snug">
           {product.title}
         </h3>
 
-        <div className="mt-auto">
-          <div className="flex items-baseline gap-2 mb-2">
-            <span className="text-xl font-bold text-gray-900">
+        <div className="mt-auto space-y-1">
+          <div className="flex items-baseline gap-2">
+            <span className="text-lg font-bold text-gray-900">
               ${product.price.toLocaleString('es-AR')}
             </span>
             {product.originalPrice && (
-              <span className="text-sm text-gray-400 line-through">
+              <span className="text-xs text-gray-400 line-through">
                 ${product.originalPrice.toLocaleString('es-AR')}
               </span>
             )}
           </div>
 
           <div className="flex items-center justify-between">
-            <div>
-              <div className="text-xs text-green-600 font-medium mb-1">
-                Envío gratis
-              </div>
-              <div className="text-xs text-gray-500">
-                <span className="font-medium">6 cuotas</span> de ${installmentValue}
-              </div>
+            <div className="text-[13px] text-blue-500 font-bold">
+              <span>6 cuotas sin interés de </span> 
+              <span className="text-gray-600">${installmentValue}</span>
             </div>
-            
             <button 
-              className="bg-black text-white p-2.5 rounded-full hover:bg-gray-800 transition-colors flex items-center justify-center"
+              className="bg-black text-white p-2 rounded-full hover:bg-gray-800 transition-colors flex items-center justify-center"
               onClick={(e) => {
                 e.stopPropagation();
               }}
             >
-              <FaShoppingCart className="text-sm" />
+              <FaShoppingCart className="text-xs" />
             </button>
           </div>
         </div>

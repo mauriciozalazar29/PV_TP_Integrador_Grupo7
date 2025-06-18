@@ -1,4 +1,4 @@
-import { FaFacebookF, FaInstagram, FaTwitter, FaCcVisa, FaCcMastercard, FaCcPaypal, FaEnvelope } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaXTwitter, FaCcVisa, FaCcMastercard, FaCcPaypal } from 'react-icons/fa6';
 import { IoMdSend } from 'react-icons/io';
 
 const Footer = () => {
@@ -73,10 +73,7 @@ const Footer = () => {
                 <FaInstagram className="text-pink-600" />
               </a>
               <a href="#" className="bg-white p-2 rounded-full border border-gray-200 hover:bg-blue-100 transition">
-                <FaTwitter className="text-blue-400" />
-              </a>
-              <a href="#" className="bg-white p-2 rounded-full border border-gray-200 hover:bg-green-50 transition">
-                <FaEnvelope className="text-green-600" />
+                <FaXTwitter className="text-black" />
               </a>
             </div>
           </div>
@@ -90,7 +87,7 @@ const Footer = () => {
         </div>
 
         <div className="text-center text-gray-500 text-sm mt-8">
-          <p>© {new Date().getFullYear()} Mi Tienda Online - Todos los derechos reservados</p>
+          <p>© {new Date().getFullYear()} TIENDAMIA - Todos los derechos reservados</p>
         </div>
       </div>
     </footer>
