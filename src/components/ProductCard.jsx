@@ -81,14 +81,7 @@ const ProductCard = ({ product }) => {
               <span>6 cuotas sin interés de </span> 
               <span className="text-gray-600">${installmentValue}</span>
             </div>
-            <button 
-              className="bg-black text-white p-2 rounded-full hover:bg-gray-800 transition-colors flex items-center justify-center"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <FaShoppingCart className="text-xs" />
-            </button>
+          
           </div>
         </div>
       </div>

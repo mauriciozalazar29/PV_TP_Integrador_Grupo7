@@ -4,6 +4,7 @@ import Favorites from './views/Favorites';
 import ProductDetail from './views/ProductDetail';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
+import Cart from './views/Cart';
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/detail/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
         </Routes>
       </main>
       <Footer />
