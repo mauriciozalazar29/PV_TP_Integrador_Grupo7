@@ -19,4 +19,8 @@ const Favorites = () => {
   );
 };
 
+ feat/product/-detail
 export default Favorites;
+
+export default Favorites;
+ develop
