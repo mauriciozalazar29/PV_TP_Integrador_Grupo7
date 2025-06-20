@@ -25,41 +25,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
- feat/product/-detail
-    <div className="border rounded-xl shadow p-4 bg-white flex flex-col justify-between">
-      <img
-        src={product.image}
-        alt={product.title}
-        className="w-full h-48 object-contain mb-2"
-      />
-
-      <h3 className="text-lg font-semibold">{product.title}</h3>
-      <p className="text-gray-600 text-sm mb-2">{product.category}</p>
-      <p className="text-blue-600 font-bold">${product.price}</p>
-      {product.stock !== undefined && (
-        <p className="text-sm text-gray-500">Stock: {product.stock}</p>
-      )}
-      {product.rating?.rate && (
-        <p className="text-sm text-yellow-600">⭐ {product.rating.rate.toFixed(1)}</p>
-      )}
-
-      <div className="mt-3 flex justify-between items-center">
-        <button
-          onClick={() => dispatch(toggleFavorite(product.id))}
-          className="text-xl"
-          title="Agregar a favoritos"
-        >
-          {isFav ? '💖' : '🤍'}
-        </button>
-
-        <Link
-          to={`/product/${product.id}`}
-          className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-        >
-          Ver más
-        </Link>
-
-    <div 
+    <div
       className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 w-full mx-auto flex flex-col h-full cursor-pointer border border-gray-100 hover:border-gray-200"
       onClick={handleCardClick}
     >
@@ -75,7 +41,7 @@ const ProductCard = ({ product }) => {
             }}
           />
         </div>
-      
+
         <button
           onClick={handleFavoriteClick}
           className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm hover:scale-110 transition-all z-10"
@@ -98,6 +64,8 @@ const ProductCard = ({ product }) => {
           {product.title}
         </h3>
 
+        <p className="text-gray-600 text-sm mb-1">{product.category}</p>
+
         <div className="mt-auto space-y-1">
           <div className="flex items-baseline gap-2">
             <span className="text-lg font-bold text-gray-900">
@@ -110,23 +78,39 @@ const ProductCard = ({ product }) => {
             )}
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="text-[13px] text-blue-500 font-bold">
-              <span>6 cuotas sin interés de </span> 
-              <span className="text-gray-600">${installmentValue}</span>
-            </div>
-          
+          <div className="text-[13px] text-blue-500 font-bold">
+            <span>6 cuotas sin interés de </span>
+            <span className="text-gray-600">${installmentValue}</span>
           </div>
-        </div>
- develop
-      </div>
 
-      <Link
-        to={`/edit/${product.id}`}
-        className="mt-2 text-xs text-blue-600 hover:underline"
-      >
-        Editar producto
-      </Link>
+          {product.stock !== undefined && (
+            <p className="text-sm text-gray-500">Stock: {product.stock}</p>
+          )}
+
+          {product.rating?.rate && (
+            <p className="text-sm text-yellow-600">⭐ {product.rating.rate.toFixed(1)}</p>
+          )}
+        </div>
+
+        <div className="flex justify-between mt-3">
+          <button
+            onClick={handleFavoriteClick}
+            className="text-sm text-pink-600 font-medium hover:underline"
+          >
+            {isFav ? '💖 Quitar de Favoritos' : '🤍 Agregar a Favoritos'}
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/edit/${product.id}`);
+            }}
+            className="text-sm text-blue-600 hover:underline"
+          >
+            Editar producto
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
