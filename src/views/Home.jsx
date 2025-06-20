@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../features/products/productsSlice';
 import ProductCard from '../components/ProductCard';
@@ -6,78 +6,46 @@ import HeroSlider from '../components/HeroSlider';
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { items, loading } = useSelector(state => state.products);
-  const [sortOrder, setSortOrder] = useState(''); // Estado para ordenar
+  const products = useSelector(state => state.products.items);
+  const loading = useSelector(state => state.products.loading);
+  const search = useSelector(state => state.search.toLowerCase());
 
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  const handleSortChange = (e) => {
-    setSortOrder(e.target.value);
-  };
-
-  // Copiamos el array para no mutar el original
-  const sortedProducts = [...items];
-
-  if (sortOrder === 'price-asc') {
-    sortedProducts.sort((a, b) => a.price - b.price);
-  } else if (sortOrder === 'price-desc') {
-    sortedProducts.sort((a, b) => b.price - a.price);
-  } else if (sortOrder === 'name-asc') {
-    sortedProducts.sort((a, b) => a.title.localeCompare(b.title));
-  } else if (sortOrder === 'name-desc') {
-    sortedProducts.sort((a, b) => b.title.localeCompare(a.title));
-  }
+  const filtered = useMemo(() => {
+    return products.filter(product => {
+      if (!search) return true;
+      
+      const terms = search.split(' ');
+      const productText = `
+        ${product.title.toLowerCase()} 
+        ${product.category.toLowerCase()} 
+        ${product.description.toLowerCase()}
+      `;
+      
+      return terms.every(term => productText.includes(term));
+    });
+  }, [products, search]);
 
   return (
- feat/product/-detail
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Productos</h1>
-
-      {/* Barra de ordenamiento */}
-      <div className="mb-4 flex items-center gap-2">
-        <label htmlFor="sort" className="font-medium">Ordenar por:</label>
-        <select
-          id="sort"
-          value={sortOrder}
-          onChange={handleSortChange}
-          className="p-2 border rounded"
-        >
-          <option value="">Sin orden</option>
-          <option value="price-asc">Precio: menor a mayor</option>
-          <option value="price-desc">Precio: mayor a menor</option>
-          <option value="name-asc">Nombre: A-Z</option>
-          <option value="name-desc">Nombre: Z-A</option>
-        </select>
-      </div>
-
-      {loading ? (
-        <p>Cargando productos...</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {sortedProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      )}
-
     <div className="p-4">
-      {/* Slider de promociones */}
       <HeroSlider />
-      {/* Productos */}
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {loading ? (
           <p className="col-span-full text-center text-gray-500">Cargando productos...</p>
-        ) : products.length > 0 ? (
-          products.map(product => (
+        ) : filtered.length > 0 ? (
+          filtered.map(product => (
             <ProductCard key={product.id} product={product} />
           ))
         ) : (
-          <p className="col-span-full text-center text-gray-500">No hay productos disponibles.</p>
+          <p className="col-span-full text-center text-gray-500">
+            {search ? "No se encontraron productos que coincidan con tu búsqueda." : "No hay productos disponibles."}
+          </p>
         )}
       </div>
- develop
     </div>
   );
 };

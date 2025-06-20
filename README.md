@@ -97,7 +97,10 @@ npm install @reduxjs/toolkit react-redux
 ```
 
 ### 💨 Tailwind CSS
+
+```bash
 npm install tailwindcss @tailwindcss/vite
+```
 
 Configurá `tailwind.config.js` así:
 

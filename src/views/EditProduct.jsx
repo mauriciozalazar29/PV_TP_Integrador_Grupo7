@@ -1,15 +1,12 @@
 import ProductForm from '../components/ProductForm';
-import { useDispatch } from 'react-redux';
-import { editProduct } from '../features/products/productsSlice';
 
-const EditProduct = () => {
-  const dispatch = useDispatch();
-
-  const handleEdit = (producto) => {
-    dispatch(editProduct(producto));
-  };
-
-  return <ProductForm onSubmit={handleEdit} />;
+const Edit = () => {
+  return (
+    <div className="p-4 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4 text-center">Editar Producto</h1>
+      <ProductForm />
+    </div>
+  );
 };
 
-export default EditProduct;
+export default Edit;

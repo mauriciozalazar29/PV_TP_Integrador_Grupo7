@@ -1,15 +1,12 @@
 import ProductForm from '../components/ProductForm';
-import { useDispatch } from 'react-redux';
-import { addProduct } from '../features/products/productsSlice';
 
-const CreateProduct = () => {
-  const dispatch = useDispatch();
-
-  const handleCreate = (producto) => {
-    dispatch(addProduct(producto));
-  };
-
-  return <ProductForm onSubmit={handleCreate} />;
+const Create = () => {
+  return (
+    <div className="p-4 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4 text-center">Crear Nuevo Producto</h1>
+      <ProductForm />
+    </div>
+  );
 };
 
-export default CreateProduct;
+export default Create;
