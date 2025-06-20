@@ -11,8 +11,11 @@ const Home = () => {
   const search = useSelector(state => state.search.toLowerCase());
 
   useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    // Solo buscar si no hay productos ya cargados
+    if (products.length === 0) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, products.length]);
 
   const filtered = useMemo(() => {
     return products.filter(product => {

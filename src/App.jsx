@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import Cart from './views/Cart';
 import Create from './views/CreateProduct';
 import Edit from './views/EditProduct';
+import Checkout from './views/Checkout';
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/create" element={<Create />} />
           <Route path="/edit/:id" element={<Edit />} />
+          <Route path="/checkout" element={<Checkout />} />
         </Routes>
       </main>
       <Footer />
