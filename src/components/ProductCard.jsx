@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleFavorite } from '../features/favorites/favoritesSlice';
 import { useNavigate } from 'react-router-dom';
 import { FiHeart } from 'react-icons/fi';
-import { FaHeart, FaShoppingCart } from 'react-icons/fa';
+import { FaHeart } from 'react-icons/fa';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();

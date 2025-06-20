@@ -4,6 +4,7 @@ import { FaHeart, FaShoppingBag, FaSearch } from 'react-icons/fa';
 import { BsCartCheckFill } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSearchTerm, clearSearchTerm } from '../features/search/searchSlice';
+import { FaPlus } from "react-icons/fa";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -67,6 +68,12 @@ const Navbar = () => {
             <Link to="/cart" className="p-2 rounded-lg hover:bg-gray-50 transition-colors relative" title="Carrito">
               <FaShoppingBag className="text-xl text-black-600" />
               <span className="absolute -top-1 -right-1 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"></span>
+            </Link>
+            <Link 
+              to="/create" 
+              className="p-2 rounded-lg hover:bg-gray-50 transition-colors" 
+              title="Crear producto" >
+              <FaPlus className="text-xl text-gray-800" />
             </Link>
           </div>
         </div>

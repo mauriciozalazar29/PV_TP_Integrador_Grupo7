@@ -28,7 +28,6 @@ const HeroSlider = () => {
                       h-40 xs:h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 2xl:h-96
                       min-h-[160px] max-h-[400px] bg-gray-100">
         
- 
         <div className="relative w-full h-full">
           {images.map((image, index) => (
             <div
@@ -54,16 +53,16 @@ const HeroSlider = () => {
 
         <button
           onClick={prev}
-          className="absolute top-1/2 left-2 sm:left-3 md:left-4 lg:left-6 transform -translate-y-1/2 
+          className="absolute top-1/2 left-1 sm:left-2 transform -translate-y-1/2 
                      bg-white/95 hover:bg-white backdrop-blur-md
-                     p-2 sm:p-2.5 md:p-3 lg:p-3.5 rounded-full shadow-xl border border-white/20
+                     p-1.5 sm:p-2 rounded-full shadow-xl border border-white/20
                      transition-all duration-300 hover:scale-110 hover:shadow-2xl
                      opacity-0 group-hover:opacity-100 focus:opacity-100 
                      focus:outline-none focus:ring-2 focus:ring-white/50
                      z-30"
           aria-label="Slide anterior"
         >
-          <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-gray-700" 
+          <svg className="w-3 h-3 sm:w-4 sm:h-4 text-gray-700" 
                fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
           </svg>
@@ -71,25 +70,23 @@ const HeroSlider = () => {
         
         <button
           onClick={next}
-          className="absolute top-1/2 right-2 sm:right-3 md:right-4 lg:right-6 transform -translate-y-1/2 
+          className="absolute top-1/2 right-1 sm:right-2 transform -translate-y-1/2 
                      bg-white/95 hover:bg-white backdrop-blur-md
-                     p-2 sm:p-2.5 md:p-3 lg:p-3.5 rounded-full shadow-xl border border-white/20
+                     p-1.5 sm:p-2 rounded-full shadow-xl border border-white/20
                      transition-all duration-300 hover:scale-110 hover:shadow-2xl
                      opacity-0 group-hover:opacity-100 focus:opacity-100 
                      focus:outline-none focus:ring-2 focus:ring-white/50
                      z-30"
           aria-label="Slide siguiente"
         >
-          <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-gray-700" 
+          <svg className="w-3 h-3 sm:w-4 sm:h-4 text-gray-700" 
                fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
           </svg>
         </button>
 
-        <div className="absolute bottom-4 sm:bottom-5 md:bottom-6 lg:bottom-8 
-                        left-1/2 transform -translate-x-1/2 
-                        flex gap-2 sm:gap-2.5 md:gap-3 lg:gap-4
-                        bg-black/20 backdrop-blur-md rounded-full px-3 py-2 z-30">
+        <div className="absolute bottom-3 sm:bottom-4 left-1/2 transform -translate-x-1/2 
+                        flex gap-1.5 sm:gap-2 bg-black/20 backdrop-blur-md rounded-full px-2 py-1.5 z-30">
           {images.map((_, index) => (
             <button
               key={index}
@@ -97,8 +94,8 @@ const HeroSlider = () => {
               className={`transition-all duration-300 rounded-full
                          focus:outline-none focus:ring-2 focus:ring-white/50 ${
                 index === current 
-                  ? 'w-6 sm:w-8 md:w-10 lg:w-12 h-2 sm:h-2.5 md:h-3 bg-white shadow-lg scale-110' 
-                  : 'w-2 sm:w-3 md:w-4 lg:w-5 h-2 sm:h-2.5 md:h-3 bg-white/50 hover:bg-white/70 hover:scale-105'
+                  ? 'w-4 sm:w-5 h-1.5 sm:h-2 bg-white shadow scale-110' 
+                  : 'w-2 sm:w-3 h-1.5 sm:h-2 bg-white/50 hover:bg-white/70 hover:scale-105'
               }`}
               aria-label={`Ir a promoción ${index + 1}`}
             />
