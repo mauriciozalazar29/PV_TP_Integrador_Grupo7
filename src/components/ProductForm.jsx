@@ -3,10 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const categoriasDisponibles = [
-  "men's clothing",
-  "women's clothing",
-  "electronics",
-  "jewelery"
+  { value: "men's clothing", label: "Ropa Masculina", icon: "👔" },
+  { value: "women's clothing", label: "Ropa Femenina", icon: "👗" },
+  { value: "electronics", label: "Electrónicos", icon: "📱" },
+  { value: "jewelery", label: "Joyería", icon: "💎" }
 ];
 
 const ProductForm = ({ onSubmit }) => {
@@ -27,6 +27,7 @@ const ProductForm = ({ onSubmit }) => {
   });
 
   const [errors, setErrors] = useState({});
+  
 
   useEffect(() => {
     if (productoExistente) {
@@ -45,7 +46,8 @@ const ProductForm = ({ onSubmit }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
-    // Limpiar error cuando el usuario empiece a escribir
+    setImagePreviewError(false);
+    
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -83,116 +85,169 @@ const ProductForm = ({ onSubmit }) => {
     navigate('/');
   };
 
-  const getCategoryIcon = (category) => {
-    const icons = {
-      "men's clothing": "👔",
-      "women's clothing": "👗",
-      "electronics": "📱",
-      "jewelery": "💎"
-    };
-    return icons[category] || "📦";
+  const getCategoryData = (categoryValue) => {
+    return categoriasDisponibles.find(cat => cat.value === categoryValue) || categoriasDisponibles[0];
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-4">
-            <span className="text-2xl text-white">{id ? "✏️" : "➕"}</span>
-          </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-            {id ? 'Editar Producto' : 'Crear Nuevo Producto'}
-          </h1>
-          <p className="text-gray-600 text-lg">
-            {id ? 'Modifica los detalles de tu producto' : 'Completa la información para agregar un nuevo producto'}
-          </p>
-        </div>
+  const currentCategory = getCategoryData(form.category);
 
-        {/* Formulario */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
-            <h2 className="text-2xl font-semibold text-white flex items-center gap-3">
-              <span className="text-3xl">{getCategoryIcon(form.category)}</span>
-              Información del Producto
-            </h2>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      {/* Header Section */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl shadow-lg">
+                <span className="text-2xl text-white">{id ? "✏️" : "➕"}</span>
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  {id ? 'Editar Producto' : 'Nuevo Producto'}
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  {id ? 'Actualiza la información del producto' : 'Completa los datos para crear un nuevo producto'}
+                </p>
+              </div>
+            </div>
+            <div className="hidden md:flex items-center space-x-2 text-sm text-gray-500">
+              <span className="text-lg">📦</span>
+              <span>Sistema de Gestión de Productos</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+          {/* Form Header */}
+          <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-8 py-6">
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center justify-center w-10 h-10 bg-white bg-opacity-20 rounded-lg">
+                <span className="text-2xl">{currentCategory.icon}</span>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-white">Información del Producto</h2>
+                <p className="text-gray-300 text-sm">Completa todos los campos obligatorios</p>
+              </div>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Columna Izquierda */}
-              <div className="space-y-6">
-                {/* Título */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    📝 Título del Producto
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+              {/* Columna Principal - Información Básica */}
+              <div className="xl:col-span-2 space-y-8">
+                {/* Título del Producto */}
+                <div className="space-y-2">
+                  <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
+                    <span className="text-base">🏷️</span>
+                    <span>Título del Producto *</span>
                   </label>
                   <input
                     name="title"
                     value={form.title}
                     onChange={handleChange}
-                    placeholder="Ingresa el nombre del producto"
-                    className={`w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-100 ${
+                    placeholder="Ej. iPhone 15 Pro Max 256GB"
+                    className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
                       errors.title 
                         ? 'border-red-400 focus:border-red-500' 
-                        : 'border-gray-200 focus:border-blue-500'
+                        : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                     }`}
                   />
-                  {errors.title && <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                    <span>⚠️</span> {errors.title}
-                  </p>}
+                  {errors.title && (
+                    <div className="flex items-center space-x-2 text-red-600 text-sm">
+                      <span>⚠️</span>
+                      <span>{errors.title}</span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Precio */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    💰 Precio
+                {/* Descripción */}
+                <div className="space-y-2">
+                  <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
+                    <span className="text-base">📝</span>
+                    <span>Descripción del Producto *</span>
                   </label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-3 text-gray-500 font-bold">$</span>
-                    <input
-                      name="price"
-                      type="number"
-                      step="0.01"
-                      value={form.price}
-                      onChange={handleChange}
-                      placeholder="0.00"
-                      className={`w-full pl-8 pr-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-100 ${
-                        errors.price 
-                          ? 'border-red-400 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-blue-500'
-                      }`}
-                    />
-                  </div>
-                  {errors.price && <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                    <span>⚠️</span> {errors.price}
-                  </p>}
-                </div>
-
-                {/* Categoría */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    🏷️ Categoría
-                  </label>
-                  <select
-                    name="category"
-                    value={form.category}
+                  <textarea
+                    name="description"
+                    value={form.description}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 bg-white"
-                  >
-                    {categoriasDisponibles.map((cat, i) => (
-                      <option key={i} value={cat}>
-                        {getCategoryIcon(cat)} {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                      </option>
-                    ))}
-                  </select>
+                    placeholder="Describe las características principales, beneficios y especificaciones técnicas del producto..."
+                    rows="6"
+                    className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 resize-none ${
+                      errors.description 
+                        ? 'border-red-400 focus:border-red-500' 
+                        : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
+                    }`}
+                  />
+                  {errors.description && (
+                    <div className="flex items-center space-x-2 text-red-600 text-sm">
+                      <span>⚠️</span>
+                      <span>{errors.description}</span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Stock y Rating */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      📦 Stock
+                {/* Precio y Categoría */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
+                      <span className="text-base text-green-600">💰</span>
+                      <span>Precio *</span>
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-green-600 font-bold text-lg">
+                        $
+                      </div>
+                      <input
+                        name="price"
+                        type="number"
+                        step="0.01"
+                        value={form.price}
+                        onChange={handleChange}
+                        placeholder="0.00"
+                        className={`w-full pl-8 pr-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
+                          errors.price 
+                            ? 'border-red-400 focus:border-red-500' 
+                            : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
+                        }`}
+                      />
+                    </div>
+                    {errors.price && (
+                      <div className="flex items-center space-x-2 text-red-600 text-sm">
+                        <span>⚠️</span>
+                        <span>{errors.price}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
+                      <span className="text-base text-purple-600">📂</span>
+                      <span>Categoría *</span>
+                    </label>
+                    <select
+                      name="category"
+                      value={form.category}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3.5 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 hover:border-gray-400 transition-all duration-200 bg-white"
+                    >
+                      {categoriasDisponibles.map((cat, i) => (
+                        <option key={i} value={cat.value}>
+                          {cat.icon} {cat.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Stock y Valoración */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
+                      <span className="text-base text-orange-600">📦</span>
+                      <span>Stock Disponible *</span>
                     </label>
                     <input
                       name="stock"
@@ -200,21 +255,25 @@ const ProductForm = ({ onSubmit }) => {
                       min="0"
                       value={form.stock}
                       onChange={handleChange}
-                      placeholder="0"
-                      className={`w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-100 ${
+                      placeholder="Cantidad en inventario"
+                      className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
                         errors.stock 
                           ? 'border-red-400 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-blue-500'
+                          : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                       }`}
                     />
-                    {errors.stock && <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                      <span>⚠️</span> {errors.stock}
-                    </p>}
+                    {errors.stock && (
+                      <div className="flex items-center space-x-2 text-red-600 text-sm">
+                        <span>⚠️</span>
+                        <span>{errors.stock}</span>
+                      </div>
+                    )}
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      ⭐ Valoración
+                  <div className="space-y-2">
+                    <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
+                      <span className="text-base text-yellow-500">⭐</span>
+                      <span>Valoración</span>
                     </label>
                     <input
                       name="rating"
@@ -224,98 +283,96 @@ const ProductForm = ({ onSubmit }) => {
                       min="0"
                       value={form.rating}
                       onChange={handleChange}
-                      placeholder="4.0"
-                      className={`w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-100 ${
+                      placeholder="4.5"
+                      className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
                         errors.rating 
                           ? 'border-red-400 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-blue-500'
+                          : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                       }`}
                     />
-                    {errors.rating && <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                      <span>⚠️</span> {errors.rating}
-                    </p>}
+                    {errors.rating && (
+                      <div className="flex items-center space-x-2 text-red-600 text-sm">
+                        <span>⚠️</span>
+                        <span>{errors.rating}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Columna Derecha */}
+              {/* Columna Lateral - Imagen y Vista Previa */}
               <div className="space-y-6">
-                {/* Imagen */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    🖼️ URL de Imagen
-                  </label>
-                  <input
-                    name="image"
-                    value={form.image}
-                    onChange={handleChange}
-                    placeholder="https://ejemplo.com/imagen.jpg"
-                    className={`w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-100 ${
-                      errors.image 
-                        ? 'border-red-400 focus:border-red-500' 
-                        : 'border-gray-200 focus:border-blue-500'
-                    }`}
-                  />
-                  {errors.image && <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                    <span>⚠️</span> {errors.image}
-                  </p>}
-                  
-                  {/* Preview de imagen */}
-                  {form.image && (
-                    <div className="mt-4 p-4 bg-gray-50 rounded-xl">
-                      <p className="text-sm text-gray-600 mb-2">Vista previa:</p>
-                      <img
-                        src={form.image}
-                        alt="Preview"
-                        className="w-32 h-32 object-contain mx-auto border-2 border-gray-200 rounded-lg bg-white"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                  )}
+                <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                  <div className="space-y-4">
+                    <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
+                      <span className="text-base text-blue-600">🖼️</span>
+                      <span>Imagen del Producto *</span>
+                    </label>
+                    
+                    <input
+                      name="image"
+                      value={form.image}
+                      onChange={handleChange}
+                      placeholder="https://ejemplo.com/imagen.jpg"
+                      className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
+                        errors.image 
+                          ? 'border-red-400 focus:border-red-500' 
+                          : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
+                      }`}
+                    />
+                    
+                    {errors.image && (
+                      <div className="flex items-center space-x-2 text-red-600 text-sm">
+                        <span>⚠️</span>
+                        <span>{errors.image}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                {/* Descripción */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    📄 Descripción
-                  </label>
-                  <textarea
-                    name="description"
-                    value={form.description}
-                    onChange={handleChange}
-                    placeholder="Describe las características y beneficios del producto..."
-                    rows="6"
-                    className={`w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-100 resize-none ${
-                      errors.description 
-                        ? 'border-red-400 focus:border-red-500' 
-                        : 'border-gray-200 focus:border-blue-500'
-                    }`}
-                  />
-                  {errors.description && <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                    <span>⚠️</span> {errors.description}
-                  </p>}
+               
+
+                {/* Estadísticas del Formulario */}
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <span className="text-xl text-green-600">📊</span>
+                    <h3 className="font-semibold text-green-900">Estado del Formulario</h3>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="text-green-700">Campos completados:</span>
+                      <span className="font-semibold text-green-800">
+                        {Object.values(form).filter(val => val.toString().trim() !== '').length}/7
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-green-700">Progreso:</span>
+                      <span className="font-semibold text-green-800">
+                        {Math.round((Object.values(form).filter(val => val.toString().trim() !== '').length / 7) * 100)}%
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Botones */}
+            {/* Botones de Acción */}
             <div className="flex flex-col sm:flex-row gap-4 mt-10 pt-8 border-t border-gray-200">
               <button
                 type="button"
                 onClick={() => navigate('/')}
-                className="flex-1 px-6 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center gap-2"
+                className="flex-1 sm:flex-none sm:px-8 px-6 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2 group"
               >
-                <span>❌</span> Cancelar
+                <span className="text-lg group-hover:scale-110 transition-transform">❌</span>
+                <span>Cancelar</span>
               </button>
               
               <button
                 type="submit"
-                className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-800 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group"
               >
-                <span>{id ? '💾' : '✨'}</span>
-                {id ? 'Guardar Cambios' : 'Crear Producto'}
+                <span className="text-lg group-hover:scale-110 transition-transform">{id ? "💾" : "✨"}</span>
+                <span>{id ? 'Guardar Cambios' : 'Crear Producto'}</span>
               </button>
             </div>
           </form>
