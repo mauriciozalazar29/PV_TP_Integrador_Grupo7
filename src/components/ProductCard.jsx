@@ -25,6 +25,40 @@ const ProductCard = ({ product }) => {
   };
 
   return (
+ feat/product/-detail
+    <div className="border rounded-xl shadow p-4 bg-white flex flex-col justify-between">
+      <img
+        src={product.image}
+        alt={product.title}
+        className="w-full h-48 object-contain mb-2"
+      />
+
+      <h3 className="text-lg font-semibold">{product.title}</h3>
+      <p className="text-gray-600 text-sm mb-2">{product.category}</p>
+      <p className="text-blue-600 font-bold">${product.price}</p>
+      {product.stock !== undefined && (
+        <p className="text-sm text-gray-500">Stock: {product.stock}</p>
+      )}
+      {product.rating?.rate && (
+        <p className="text-sm text-yellow-600">⭐ {product.rating.rate.toFixed(1)}</p>
+      )}
+
+      <div className="mt-3 flex justify-between items-center">
+        <button
+          onClick={() => dispatch(toggleFavorite(product.id))}
+          className="text-xl"
+          title="Agregar a favoritos"
+        >
+          {isFav ? '💖' : '🤍'}
+        </button>
+
+        <Link
+          to={`/product/${product.id}`}
+          className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+        >
+          Ver más
+        </Link>
+
     <div 
       className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 w-full max-w-sm mx-auto flex flex-col h-full cursor-pointer border border-gray-100 hover:border-gray-200"
       onClick={handleCardClick}
@@ -112,7 +146,15 @@ const ProductCard = ({ product }) => {
             </button>
           </div>
         </div>
+ develop
       </div>
+
+      <Link
+        to={`/edit/${product.id}`}
+        className="mt-2 text-xs text-blue-600 hover:underline"
+      >
+        Editar producto
+      </Link>
     </div>
   );
 };
