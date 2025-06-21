@@ -12,11 +12,7 @@ const Edit = () => {
     navigate('/');
   };
 
-  return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <ProductForm onSubmit={handleSubmit} />
-    </div>
-  );
+  return <ProductForm onSubmit={handleSubmit} />;
 };
 
 export default Edit;
