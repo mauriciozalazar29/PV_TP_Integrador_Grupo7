@@ -357,24 +357,22 @@ const ProductForm = ({ onSubmit }) => {
             </div>
 
             {/* Botones de Acción */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-10 pt-8 border-t border-gray-200">
-              <button
-                type="button"
-                onClick={() => navigate('/')}
-                className="flex-1 sm:flex-none sm:px-8 px-6 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2 group"
-              >
-                <span className="text-lg group-hover:scale-110 transition-transform">❌</span>
-                <span>Cancelar</span>
-              </button>
-              
-              <button
-                type="submit"
-                className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-800 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group"
-              >
-                <span className="text-lg group-hover:scale-110 transition-transform">{id ? "💾" : "✨"}</span>
-                <span>{id ? 'Guardar Cambios' : 'Crear Producto'}</span>
-              </button>
-            </div>
+           <div className="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-gray-200">
+  <button
+    type="button"
+    onClick={() => navigate('/')}
+    className="flex-1 px-4 py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2 group"
+  >
+    <span className="text-sm group-hover:scale-110 transition-transform">❌</span>
+  </button>
+  
+  <button
+    type="submit"
+    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-indigo-800 transform hover:scale-[1.02] transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center space-x-2 group"
+  >
+    <span className="text-sm group-hover:scale-110 transition-transform">💾</span>
+  </button>
+</div>
           </form>
         </div>
       </div>

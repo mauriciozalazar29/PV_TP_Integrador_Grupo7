@@ -1,4 +1,3 @@
-// src/views/CreateProduct.jsx
 import { useDispatch } from 'react-redux';
 import { addProduct } from '../features/products/productsSlice';
 import ProductForm from '../components/ProductForm';
