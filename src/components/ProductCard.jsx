@@ -63,9 +63,6 @@ const ProductCard = ({ product }) => {
         <h3 className="text-[15px] font-medium text-gray-900 line-clamp-2 mt-2 leading-snug">
           {product.title}
         </h3>
-
-        <p className="text-gray-600 text-sm mb-1">{product.category}</p>
-
         <div className="mt-auto space-y-1">
           <div className="flex items-baseline gap-2">
             <span className="text-lg font-bold text-gray-900">
@@ -78,37 +75,10 @@ const ProductCard = ({ product }) => {
             )}
           </div>
 
-          <div className="text-[13px] text-blue-500 font-bold">
+          <div className="text-[13px] text-blue-600 font-bold">
             <span>6 cuotas sin interés de </span>
-            <span className="text-gray-600">${installmentValue}</span>
+            <span className="text-gray-700">${installmentValue}</span>
           </div>
-
-          {product.stock !== undefined && (
-            <p className="text-sm text-gray-500">Stock: {product.stock}</p>
-          )}
-
-          {product.rating?.rate && (
-            <p className="text-sm text-yellow-600">⭐ {product.rating.rate.toFixed(1)}</p>
-          )}
-        </div>
-
-        <div className="flex justify-between mt-3">
-          <button
-            onClick={handleFavoriteClick}
-            className="text-sm text-pink-600 font-medium hover:underline"
-          >
-            {isFav ? '💖 Quitar de Favoritos' : '🤍 Agregar a Favoritos'}
-          </button>
-
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/edit/${product.id}`);
-            }}
-            className="text-sm text-blue-600 hover:underline"
-          >
-            Editar producto
-          </button>
         </div>
       </div>
     </div>
