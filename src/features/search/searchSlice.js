@@ -1,18 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const persistedSearch = localStorage.getItem('search') || '';
+const initialState = {
+  term: '',
+};
 
 const searchSlice = createSlice({
   name: 'search',
-  initialState: persistedSearch,
+  initialState,
   reducers: {
-    setSearchTerm: (_, { payload }) => {
-      localStorage.setItem('search', payload);
-      return payload;
+    setSearchTerm: (state, action) => {
+      state.term = action.payload;
     },
-    clearSearchTerm: () => {
-      localStorage.removeItem('search');
-      return '';
+    clearSearchTerm: (state) => {
+      state.term = '';
     },
   },
 });

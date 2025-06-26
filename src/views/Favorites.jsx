@@ -1,20 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addToCart } from '../features/cart/cartSlice';
 import ProductCard from '../components/ProductCard';
+import { fetchProducts } from '../features/products/productsSlice';
 
 const Favorites = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const favorites = useSelector(state => state.favorites);
+  const favorites = useSelector(state => state.favorites.items);
   const products = useSelector(state => state.products.items);
-  
-  // Estados para filtros
+
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
+  useEffect(() => {
+    if (!products || products.length === 0) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, products]);
+
+  if (!products || products.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="text-gray-500 text-lg">Cargando productos...</span>
+      </div>
+    );
+  }
+
   // Obtener productos favoritos
-  const favProducts = products.filter(p => favorites.includes(p.id));
+  const favProducts = products.filter(p => favorites.some(fav => fav.id === p.id));
 
   // Obtener categorías únicas de los favoritos
   const getUniqueCategories = () => {
@@ -23,23 +37,26 @@ const Favorites = () => {
   };
 
   // Filtrar productos por categoría
-  const filteredProducts = selectedCategory === 'Todos' 
-    ? favProducts 
+  const filteredProducts = selectedCategory === 'Todos'
+    ? favProducts
     : favProducts.filter(p => p.category === selectedCategory);
 
-  // Agregar todos los productos al carrito
+  // Agregar un producto individual al carrito
+  const handleAddToCart = (product) => {
+    dispatch(addToCart({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      image: product.image,
+      size: 'default'
+    }));
+  };
+
+  // Agregar todos los productos filtrados al carrito
   const handleAddAllToCart = () => {
     filteredProducts.forEach(product => {
-      dispatch(addToCart({
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        image: product.image,
-        size: 'default' // Tamaño por defecto
-      }));
+      handleAddToCart(product);
     });
-    
-    // Navegar al carrito después de agregar los productos
     navigate('/cart');
   };
 
@@ -90,15 +107,7 @@ const Favorites = () => {
             {selectedCategory !== 'Todos' && ` en ${selectedCategory}`}
           </p>
         </div>
-        
-        {favProducts.length > 0 && (
-          <div className="flex items-center gap-3">
-            {/* Aquí se pueden agregar otros botones en el futuro */}
-          </div>
-        )}
       </div>
-      
-      {/* Filtros de categoría como chips */}
       {favProducts.length > 0 && (
         <div className="mt-6 flex flex-wrap gap-2">
           {getUniqueCategories().map(category => (
@@ -121,7 +130,6 @@ const Favorites = () => {
 
   const QuickActions = () => {
     if (filteredProducts.length === 0) return null;
-    
     return (
       <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
         <div className="flex items-center justify-between">
@@ -148,7 +156,7 @@ const Favorites = () => {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {filteredProducts.map(product => (
         <div key={product.id} className="group">
-          <ProductCard product={product} />
+          <ProductCard product={product} onAddToCart={() => handleAddToCart(product)} />
         </div>
       ))}
     </div>
@@ -156,13 +164,11 @@ const Favorites = () => {
 
   const RecommendedSection = () => {
     if (favProducts.length === 0) return null;
-    
-    // Obtener productos similares basados en categorías de favoritos
     const favoriteCategories = [...new Set(favProducts.map(p => p.category))];
     const similarProducts = products
       .filter(p => 
         favoriteCategories.includes(p.category) && 
-        !favorites.includes(p.id)
+        !favorites.some(fav => fav.id === p.id)
       )
       .slice(0, 4);
 
@@ -177,11 +183,10 @@ const Favorites = () => {
           <p className="text-gray-600 mb-8">
             Basado en tus productos favoritos
           </p>
-          
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {similarProducts.map(product => (
               <div key={product.id} className="group">
-                <ProductCard product={product} />
+                <ProductCard product={product} onAddToCart={() => handleAddToCart(product)} />
               </div>
             ))}
           </div>
@@ -194,7 +199,6 @@ const Favorites = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <FavoritesHeader />
-        
         {favProducts.length === 0 ? (
           <EmptyState />
         ) : (

@@ -1,26 +1,41 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleFavorite } from '../features/favorites/favoritesSlice';
+import { addFavorite, removeFavorite } from '../features/favorites/favoritesSlice';
 import { addToCart } from '../features/cart/cartSlice';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { fetchProducts } from '../features/products/productsSlice';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const products = useSelector(state => state.products.items);
+  const favorites = useSelector(state => state.favorites.items);
 
-  const product = useSelector(state =>
-    state.products.items.find(item => item.id === parseInt(id))
-  );
-
-  const favorites = useSelector(state => state.favorites);
-  const isFav = favorites.includes(parseInt(id));
-
-  const [tab, setTab] = useState('descripcion');
+  // TODOS LOS HOOKS VAN AQUÍ
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [isZoomed, setIsZoomed] = useState(false);
   const [talleSeleccionado, setTalleSeleccionado] = useState(null);
   const [cantidad, setCantidad] = useState(1);
+
+  // Cargar productos si no están listos
+  useEffect(() => {
+    if (!products || products.length === 0) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, products]);
+
+  // Loader mientras se cargan los productos
+  if (!products || products.length === 0) {
+    return <div className="text-center py-20">Cargando producto...</div>;
+  }
+
+  const product = products.find(item => String(item.id) === String(id));
+  if (!product) {
+    return <div className="text-center py-20">Producto no encontrado</div>;
+  }
+
+  const isFav = favorites.some(p => p.id === product.id);
 
   const categoria = product?.category?.toLowerCase() || '';
   const titulo = product?.title?.toLowerCase() || '';
@@ -29,13 +44,7 @@ const ProductDetail = () => {
 
   const mostrarTalles = (
     categoria.includes("clothing") &&
-    (
-      titulo.includes("shirt") ||
-      titulo.includes("jacket") ||
-      titulo.includes("remera") ||
-      titulo.includes("campera") ||
-      titulo.includes("t-shirt")
-    )
+    (titulo.includes("shirt") || titulo.includes("jacket") || titulo.includes("remera") || titulo.includes("campera") || titulo.includes("t-shirt"))
   );
 
   const mostrarGuiaDeTalles = mostrarTalles && categoria !== 'jewelery';
@@ -63,21 +72,16 @@ const ProductDetail = () => {
     20: ['Material: Algodón 95% y Spandex 5%', 'Lavado: Lavado a lavarropas', 'Origen: Argentina'],
   };
 
-  const obtenerDetalles = () => {
-    return detallesPorId[product.id] || ['No hay detalles personalizados para este producto.'];
-  };
+  const obtenerDetalles = () => detallesPorId[product.id] || ['No hay detalles personalizados para este producto.'];
 
-  const calcularPrecioOriginal = (precio) => {
-    const aumentoFicticio = 1.176; // Para que con 15% descuento quede el precio original
-    return (precio * aumentoFicticio).toFixed(2);
-  };
+  const calcularPrecioOriginal = (precio) => (precio * 1.176).toFixed(2);
 
   const calcularCuotas = (precio) => {
-    const precioTotal = precio * cantidad;
+    const total = precio * cantidad;
     return {
-      tres: (precioTotal / 3).toFixed(2),
-      seis: (precioTotal / 6).toFixed(2),
-      doce: (precioTotal / 12).toFixed(2)
+      tres: (total / 3).toFixed(2),
+      seis: (total / 6).toFixed(2),
+      doce: (total / 12).toFixed(2),
     };
   };
 
@@ -87,321 +91,123 @@ const ProductDetail = () => {
       return;
     }
 
-    const item = {
+    dispatch(addToCart({
       id: product.id,
       title: product.title,
       price: product.price,
       image: product.image,
       size: mostrarTalles ? talleSeleccionado : null,
       quantity: cantidad,
-    };
+    }));
 
-    dispatch(addToCart(item));
     navigate('/cart');
   };
 
-  if (!product) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p className="text-xl text-gray-600">Producto no encontrado</p>
-    </div>
-  );
+  const handleFavorite = () => {
+    if (isFav) {
+      dispatch(removeFavorite(product));
+    } else {
+      dispatch(addFavorite(product));
+    }
+  };
 
-  const precioOriginalFicticio = calcularPrecioOriginal(product.price);
+  const precioOriginal = calcularPrecioOriginal(product.price);
   const cuotas = calcularCuotas(product.price);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-2xl shadow-lg overflow-hidden">
-        
-          <div className="p-6">
-            <div
-              onMouseMove={(e) => {
-                const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-                const x = ((e.clientX - left) / width) * 100;
-                const y = ((e.clientY - top) / height) * 100;
-                setZoomPosition({ x, y });
-              }}
-              onMouseEnter={() => setIsZoomed(true)}
-              onMouseLeave={() => setIsZoomed(false)}
-              className="relative w-full h-96 lg:h-[500px] overflow-hidden rounded-xl border border-gray-200 cursor-zoom-in"
-            >
-              <img
-                src={product.image}
-                alt={product.title}
-                className="w-full h-full object-contain transition-transform duration-300 ease-out"
-                style={
-                  isZoomed
-                    ? { transform: 'scale(2.5)', transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` }
-                    : { transform: 'scale(1)' }
-                }
-              />
-            </div>
-
-            <div className="flex gap-3 mt-4 lg:hidden">
-              <button
-                onClick={() => dispatch(toggleFavorite(product.id))}
-                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
-                  isFav 
-                    ? 'bg-red-100 text-red-700 border border-red-200' 
-                    : 'bg-gray-100 text-gray-700 border border-gray-200'
-                }`}
-              >
-                {isFav ? '❤️ En Favoritos' : '🤍 Favoritos'}
-              </button>
-              
-              <button
-                onClick={() => navigate(`/edit/${product.id}`)}
-                className="px-4 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
-              >
-                ✏️
-              </button>
-            </div>
-          </div>
-
-          {/* Sección de Información */}
-          <div className="p-6 lg:p-8">
-            
-            {/* Header con título y acciones */}
-            <div className="flex justify-between items-start mb-6">
-              <div className="flex-1">
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">
-                  {product.title}
-                </h1>
-                <p className="text-sm text-gray-500 uppercase tracking-wide">
-                  SKU: {product.category?.replace(/\s+/g, '').toUpperCase()}{product.id.toString().padStart(3, '0')}
-                </p>
-              </div>
-              
-              {/* Botones de acción desktop */}
-              <div className="hidden lg:flex gap-3">
-                <button
-                  onClick={() => dispatch(toggleFavorite(product.id))}
-                  className={`p-3 rounded-lg transition-colors ${
-                    isFav 
-                      ? 'bg-red-100 text-red-700 border border-red-200' 
-                      : 'bg-gray-100 text-gray-700 border border-gray-200'
-                  }`}
-                >
-                  {isFav ? '❤️' : '🤍'}
-                </button>
-                
-                <button
-                  onClick={() => navigate(`/edit/${product.id}`)}
-                  className="p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
-                >
-                  ✏️
-                </button>
-              </div>
-            </div>
-
-            {/* Precio y valoración */}
-            <div className="mb-6">
-              <div className="flex items-baseline gap-3 mb-2">
-                <span className="text-3xl lg:text-4xl font-bold text-gray-900">
-                  ${product.price}
-                </span>
-                <span className="text-lg text-gray-500 line-through">
-                  ${precioOriginalFicticio}
-                </span>
-                <span className="bg-green-100 text-green-800 text-sm font-medium px-2 py-1 rounded">
-                  15% OFF
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-yellow-400">
-                      {i < Math.floor(rating) ? '★' : '☆'}
-                    </span>
-                  ))}
-                </div>
-                <span className="text-sm text-gray-600">
-                  ({rating.toFixed(1)}) • {reviewCount} reseñas
-                </span>
-              </div>
-            </div>
-
-            {/* Opciones de pago */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <h3 className="font-semibold text-blue-900 mb-2">💳 Opciones de pago</h3>
-              <div className="space-y-1 text-sm text-blue-800">
-                <p>3 cuotas sin interés de <strong>${cuotas.tres}</strong></p>
-                <p>6 cuotas sin interés de <strong>${cuotas.seis}</strong></p>
-                <p>12 cuotas fijas de <strong>${cuotas.doce}</strong></p>
-              </div>
-              <button className="text-blue-600 text-sm font-medium mt-2 hover:underline">
-                Ver todos los medios de pago →
-              </button>
-            </div>
-
-            {/* Selección de talle */}
-            {mostrarTalles && (
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-gray-900">Talle Argentino</h3>
-                  <button 
-                    onClick={() => setTab('guia')}
-                    className="text-blue-600 text-sm hover:underline"
-                  >
-                    ¿Tu talle está agotado?
-                  </button>
-                </div>
-                
-                <div className="grid grid-cols-4 gap-2">
-                  {['S', 'M', 'L', 'XL', 'XXL'].map(talle => (
-                    <button
-                      key={talle}
-                      onClick={() => setTalleSeleccionado(talle)}
-                      className={`py-3 px-4 border rounded-lg font-medium transition-all ${
-                        talleSeleccionado === talle 
-                          ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                          : 'border-gray-300 hover:border-gray-400'
-                      }`}
-                    >
-                      {talle}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Selector de cantidad */}
-            <div className="mb-6">
-              <h3 className="font-semibold text-gray-900 mb-3">Cantidad</h3>
-              <div className="flex items-center border border-gray-300 rounded-lg w-fit">
-                <button
-                  onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-                  className="px-4 py-2 hover:bg-gray-100 transition-colors"
-                >
-                  −
-                </button>
-                <span className="px-4 py-2 font-medium min-w-[50px] text-center">
-                  {cantidad}
-                </span>
-                <button
-                  onClick={() => setCantidad(cantidad + 1)}
-                  className="px-4 py-2 hover:bg-gray-100 transition-colors"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-            
-            <div className="space-y-3">
-              <button
-                onClick={agregarAlCarrito}
-                className="w-full bg-black text-white py-4 rounded-lg font-semibold text-lg hover:bg-gray-800 transition-colors"
-              >
-                AGREGAR AL CARRITO
-              </button>
-            </div>
-
-            {/* Información adicional */}
-            <div className="mt-6 space-y-2 text-sm text-gray-600">
-              <p>✅ Envío gratis a todo el país</p>
-              <p>🔄 Devolución gratuita hasta 30 días</p>
-              <p>🛡️ Garantía de fábrica</p>
-            </div>
-          </div>
+    <div className="p-4 max-w-6xl mx-auto">
+      <div className="grid lg:grid-cols-2 gap-6 bg-white p-6 rounded-lg shadow">
+        <div
+          onMouseMove={(e) => {
+            const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+            const x = ((e.clientX - left) / width) * 100;
+            const y = ((e.clientY - top) / height) * 100;
+            setZoomPosition({ x, y });
+          }}
+          onMouseEnter={() => setIsZoomed(true)}
+          onMouseLeave={() => setIsZoomed(false)}
+          className="overflow-hidden border rounded-lg"
+        >
+          <img
+            src={product.image}
+            alt={product.title}
+            className="w-full h-96 object-contain transition-transform"
+            style={isZoomed ? {
+              transform: 'scale(2.5)',
+              transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`
+            } : { transform: 'scale(1)' }}
+          />
         </div>
 
-        {/* Tabs de información */}
-        <div className="bg-white rounded-2xl shadow-lg mt-8 overflow-hidden">
-          <div className="border-b border-gray-200">
-            <div className="flex">
-              {[
-                { id: 'descripcion', label: 'Descripción' },
-                { id: 'detalles', label: 'Especificaciones' },
-                ...(mostrarGuiaDeTalles ? [{ id: 'guia', label: 'Guía de Talles' }] : [])
-              ].map((tabItem) => (
-                <button
-                  key={tabItem.id}
-                  onClick={() => setTab(tabItem.id)}
-                  className={`px-6 py-4 font-medium transition-colors ${
-                    tab === tabItem.id
-                      ? 'border-b-2 border-blue-500 text-blue-600'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {tabItem.label}
-                </button>
-              ))}
+        <div>
+          <h1 className="text-2xl font-bold mb-2">{product.title}</h1>
+          <p className="text-gray-500 text-sm mb-4">SKU: {product.category?.toUpperCase()}{product.id.toString().padStart(3, '0')}</p>
+
+          <div className="mb-4">
+            <p className="text-3xl font-semibold">${product.price}</p>
+            <p className="text-gray-400 line-through">${precioOriginal}</p>
+            <p className="text-green-600 font-medium">15% OFF</p>
+          </div>
+
+          <div className="mb-4">
+            {[...Array(5)].map((_, i) => (
+              <span key={i} className="text-yellow-400">
+                {i < Math.floor(rating) ? '★' : '☆'}
+              </span>
+            ))}
+            <span className="ml-2 text-sm text-gray-600">({rating}) • {reviewCount} reseñas</span>
+          </div>
+
+          {mostrarTalles && (
+            <div className="mb-4">
+              <p className="font-semibold mb-2">Talles</p>
+              <div className="flex gap-2">
+                {['S', 'M', 'L', 'XL', 'XXL'].map(talle => (
+                  <button
+                    key={talle}
+                    onClick={() => setTalleSeleccionado(talle)}
+                    className={`px-4 py-2 border rounded ${talleSeleccionado === talle ? 'bg-blue-100 border-blue-500' : 'border-gray-300'}`}
+                  >
+                    {talle}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="mb-4">
+            <p className="font-semibold mb-2">Cantidad</p>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setCantidad(Math.max(1, cantidad - 1))} className="px-3 py-1 bg-gray-100">-</button>
+              <span>{cantidad}</span>
+              <button onClick={() => setCantidad(cantidad + 1)} className="px-3 py-1 bg-gray-100">+</button>
             </div>
           </div>
 
-          <div className="p-6">
-            {tab === 'descripcion' && (
-              <div className="prose max-w-none">
-                <p className="text-gray-700 leading-relaxed">{product.description}</p>
-              </div>
-            )}
+          <button onClick={agregarAlCarrito} className="w-full bg-black text-white py-3 rounded-lg mt-4">Agregar al carrito</button>
 
-            {tab === 'detalles' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {obtenerDetalles().map((detalle, i) => {
-                  const [key, value] = detalle.split(': ');
-                  return (
-                    <div key={i} className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="font-medium text-gray-900">{key}</span>
-                      <span className="text-gray-600">{value}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+          <button
+            onClick={handleFavorite}
+            className="w-full border mt-2 py-2 rounded-lg"
+          >
+            {isFav ? '❤️ En Favoritos' : '🤍 Agregar a Favoritos'}
+          </button>
 
-            {tab === 'guia' && mostrarGuiaDeTalles && (
-              <div>
-                <h3 className="font-semibold text-lg mb-4">Guía de Talles</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-gray-200">
-                        <th className="text-left py-2 px-4">Talle</th>
-                        <th className="text-left py-2 px-4">Pecho (cm)</th>
-                        <th className="text-left py-2 px-4">Cintura (cm)</th>
-                        <th className="text-left py-2 px-4">Cadera (cm)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b border-gray-100">
-                        <td className="py-2 px-4 font-medium">S</td>
-                        <td className="py-2 px-4">86-91</td>
-                        <td className="py-2 px-4">76-81</td>
-                        <td className="py-2 px-4">91-96</td>
-                      </tr>
-                      <tr className="border-b border-gray-100">
-                        <td className="py-2 px-4 font-medium">M</td>
-                        <td className="py-2 px-4">92-97</td>
-                        <td className="py-2 px-4">82-87</td>
-                        <td className="py-2 px-4">97-102</td>
-                      </tr>
-                      <tr className="border-b border-gray-100">
-                        <td className="py-2 px-4 font-medium">L</td>
-                        <td className="py-2 px-4">98-104</td>
-                        <td className="py-2 px-4">88-94</td>
-                        <td className="py-2 px-4">103-109</td>
-                      </tr>
-                      <tr className="border-b border-gray-100">
-                        <td className="py-2 px-4 font-medium">XL</td>
-                        <td className="py-2 px-4">105-112</td>
-                        <td className="py-2 px-4">95-102</td>
-                        <td className="py-2 px-4">110-117</td>
-                      </tr>
-                      <tr>
-                        <td className="py-2 px-4 font-medium">XXL</td>
-                        <td className="py-2 px-4">113-120</td>
-                        <td className="py-2 px-4">103-110</td>
-                        <td className="py-2 px-4">118-125</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
+          <div className="mt-6">
+            <h3 className="font-semibold mb-2">Especificaciones</h3>
+            <ul className="list-disc pl-5 text-sm text-gray-700 space-y-1">
+              {obtenerDetalles().map((item, idx) => (
+                <li key={idx}>{item}</li>
+              ))}
+            </ul>
           </div>
+
+          {mostrarGuiaDeTalles && (
+            <div className="mt-6">
+              <h3 className="font-semibold mb-2">Guía de Talles</h3>
+              <p className="text-sm text-gray-600">Consulta nuestra guía de talles completa en la sección ayuda del sitio.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

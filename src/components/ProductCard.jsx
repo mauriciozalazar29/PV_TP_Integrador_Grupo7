@@ -1,14 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleFavorite } from '../features/favorites/favoritesSlice';
+import { addFavorite, removeFavorite } from '../features/favorites/favoritesSlice';
 import { useNavigate } from 'react-router-dom';
 import { FiHeart } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onAddToCart }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const favorites = useSelector(state => state.favorites);
-  const isFav = favorites.includes(product.id);
+  const favorites = useSelector(state => state.favorites.items);
+  const isFav = favorites.some(p => p.id === product.id);
 
   const installmentValue = (product.price / 6).toLocaleString('es-AR', {
     minimumFractionDigits: 2,
@@ -21,7 +21,11 @@ const ProductCard = ({ product }) => {
 
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
-    dispatch(toggleFavorite(product.id));
+    if (isFav) {
+      dispatch(removeFavorite(product));
+    } else {
+      dispatch(addFavorite(product));
+    }
   };
 
   return (
@@ -41,7 +45,6 @@ const ProductCard = ({ product }) => {
             }}
           />
         </div>
-
         <button
           onClick={handleFavoriteClick}
           className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm hover:scale-110 transition-all z-10"
@@ -99,7 +102,7 @@ const ProductCard = ({ product }) => {
           >
             {isFav ? '💖 Quitar de Favoritos' : '🤍 Agregar a Favoritos'}
           </button>
-
+         
           <button
             onClick={(e) => {
               e.stopPropagation();

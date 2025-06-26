@@ -3,7 +3,7 @@ import { removeFromCart, clearCart } from '../features/cart/cartSlice';
 import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
-  const cart = useSelector(state => state.cart);
+  const cart = useSelector(state => state.cart.items); // Asegúrate de acceder a state.cart.items
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
