@@ -2,15 +2,24 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSearchTerm, clearSearchTerm } from '../features/search/searchSlice';
-import { FaHeart, FaShoppingBag, FaSearch, FaPlus } from 'react-icons/fa';
+import { FaHeart, FaShoppingBag, FaSearch, FaPlus, FaSignOutAlt } from 'react-icons/fa';
+import { logout } from '../features/auth/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 const NavBar = () => {
   const dispatch = useDispatch();
   const search = useSelector(state => state.search);
   const cart = useSelector(state => state.cart);
-
+  const user = useSelector(state => state.auth.user);
+  const navigate = useNavigate();
+  
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const [localSearch, setLocalSearch] = useState(search);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
 
   useEffect(() => {
     setLocalSearch(search);
@@ -32,7 +41,6 @@ const NavBar = () => {
             <FaShoppingBag className="text-2xl text-black-600" />
             <span className="font-bold text-gray-800 hidden sm:block">TIENDAMIA</span>
           </Link>
-
           {/* Search */}
           <div className="flex-1 mx-6">
             <div className="flex items-center rounded-full border border-gray-300 px-4 py-2 w-full max-w-xl mx-auto">
@@ -81,7 +89,23 @@ const NavBar = () => {
               title="Crear producto"
             >
               <FaPlus className="text-xl text-gray-800" />
+              
             </Link>
+            {/* User Profile */}
+            {user && (
+            <div className="hidden sm:flex items-center text-sm text-gray-700">
+              <span className="font-medium text-gray-600">Bienvenido, {user.email}</span>
+            </div>
+            )}
+            {user && (
+              <button
+                onClick={handleLogout}
+                className="p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                title="Cerrar sesión"
+              >
+                <FaSignOutAlt className="text-xl text-gray-800" />
+              </button>
+            )}
           </div>
         </div>
       </div>

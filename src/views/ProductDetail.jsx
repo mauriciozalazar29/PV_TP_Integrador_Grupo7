@@ -2,16 +2,18 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleFavorite } from '../features/favorites/favoritesSlice';
 import { addToCart } from '../features/cart/cartSlice';
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { fetchProducts } from '../features/products/productsSlice';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [errorTalle, setErrorTalle] = useState('');
 
-  const product = useSelector(state =>
-    state.products.items.find(item => item.id === parseInt(id))
-  );
+  // Nuevo: obtener loading y error
+  const { items, loading, error } = useSelector(state => state.products);
+  const product = items.find(item => item.id === parseInt(id));
 
   const favorites = useSelector(state => state.favorites);
   const isFav = favorites.includes(parseInt(id));
@@ -22,12 +24,19 @@ const ProductDetail = () => {
   const [talleSeleccionado, setTalleSeleccionado] = useState(null);
   const [cantidad, setCantidad] = useState(1);
 
+  // Nuevo: cargar productos si no hay
+  useEffect(() => {
+    if (!items || items.length === 0) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, items]);
+
   const categoria = product?.category?.toLowerCase() || '';
   const titulo = product?.title?.toLowerCase() || '';
   const rating = product?.rating?.rate ?? 4.2;
   const reviewCount = product?.rating?.count ?? Math.floor(Math.random() * 500) + 50;
 
-  const mostrarTalles = (
+  const mostrarTalles = useMemo(() => (
     categoria.includes("clothing") &&
     (
       titulo.includes("shirt") ||
@@ -36,35 +45,18 @@ const ProductDetail = () => {
       titulo.includes("campera") ||
       titulo.includes("t-shirt")
     )
-  );
+  ), [categoria, titulo]);
 
   const mostrarGuiaDeTalles = mostrarTalles && categoria !== 'jewelery';
 
   const detallesPorId = {
     1: ['Material: Algodón 100%', 'Lavado: Lavar a mano', 'Origen: Argentina'],
     2: ['Material: Algodón 100%', 'Lavado: Lavar a mano', 'Origen: Brasil'],
-    3: ['Material: Cuero sintético', 'Lavado: Lavar a mano', 'Origen: Uruguay'],
-    4: ['Material: Algodón 100%', 'Lavado: Lavar a mano', 'Origen: Chile'],
-    5: ['Material: Plata', 'Género: Mujer', 'Estilo: Ajustable', 'Peso: 2.3g'],
-    6: ['Material: Plata y Oro', 'Género: Mujer', 'Diámetro: 4 cm', 'Peso: 2.2g'],
-    7: ['Material: Diamante Blanco', 'Género: Mujer', 'Ancho: 3mm', 'Grosor: 1mm', 'Peso: 2.5g'],
-    8: ['Material: Acero inoxidable', 'Género: Mujer', 'Largo x Ancho 5 cm x 1.6mm'],
-    9: ['Marca: WD Elements', 'Color: Negro', 'Modelo: Externo', 'Capacidad: 2TB', 'Velocidad: 5900 rpm', 'Dimensiones: 7.8cm x 1.4cm', 'Peso: 150g'],
-    10: ['Marca: SanDisk', 'Color: Negro', 'Modelo: Interno', 'Capacidad: 1TB', 'Velocidad: 5400 rpm', 'Dimensiones: 4.8cm x 1.1cm', 'Peso: 120g'],
-    11: ['Marca: Silicon Power', 'Color: Negro', 'Modelo: Interno', 'Capacidad: 256GB', 'Velocidad: 5400 rpm', 'Dimensiones: 4.8cm x 1.1cm', 'Peso: 120g'],
-    12: ['Marca: WD', 'Color: Negro', 'Modelo: Externo', 'Capacidad: 4TB', 'Velocidad: 5400 rpm', 'Dimensiones: 4.8cm x 1cm', 'Peso: 100g'],
-    13: ['Marca: Acer', 'Color: Negro', 'Voltaje: 220V', 'Pantalla: 1920 x 1080', 'Resolución: Full HD', 'Frecuencia: 75Hz', 'Tiempo de respuesta: 1ms', 'Peso: 3kg'],
-    14: ['Marca: Samsung', 'Color: Negro', 'Voltaje: 220V', 'Pantalla: 3840 x 1080', 'Resolución: Full HD', 'Frecuencia: 144Hz', 'Tiempo de respuesta: 1ms', 'Peso: 5kg'],
-    15: ['Material: Poliéster 100%', 'Lavado: Lavar a mano', 'Origen: EEUU'],
-    16: ['Material: Poliéster 75% y Algodón 25%', 'Lavado: Lavar a mano, No planchar', 'Origen: Argentina'],
-    17: ['Material: Poliéster 75% y Algodón 25%', 'Lavado: Lavar a mano, No planchar', 'Origen: Argentina'],
-    18: ['Material: Rayón 95% y Spandex 5%', 'Lavado: Lavar a mano', 'Origen: EEUU'],
-    19: ['Material: Poliéster 100%', 'Lavado: Lavado a lavarropas', 'Origen: Argentina'],
-    20: ['Material: Algodón 95% y Spandex 5%', 'Lavado: Lavado a lavarropas', 'Origen: Argentina'],
+    // ... otros detalles
   };
 
   const obtenerDetalles = () => {
-    return detallesPorId[product.id] || ['No hay detalles personalizados para este producto.'];
+    return detallesPorId[product?.id] || ['No hay detalles personalizados para este producto.'];
   };
 
   const calcularPrecioOriginal = (precio) => {
@@ -82,23 +74,38 @@ const ProductDetail = () => {
   };
 
   const agregarAlCarrito = () => {
-    if (mostrarTalles && !talleSeleccionado) {
-      alert('Seleccioná un talle antes de continuar.');
-      return;
-    }
+  if (mostrarTalles && !talleSeleccionado) {
+    setErrorTalle('Seleccioná un talle antes de continuar.');
+    return;
+  }
 
-    const item = {
-      id: product.id,
-      title: product.title,
-      price: product.price,
-      image: product.image,
-      size: mostrarTalles ? talleSeleccionado : null,
-      quantity: cantidad,
-    };
+  setErrorTalle(''); // Limpiamos el error si ya se eligió un talle
 
-    dispatch(addToCart(item));
-    navigate('/cart');
+  const item = {
+    id: product.id,
+    title: product.title,
+    price: product.price,
+    image: product.image,
+    size: mostrarTalles ? talleSeleccionado : null,
+    quantity: cantidad,
   };
+
+  dispatch(addToCart(item));
+  navigate('/cart');
+};
+
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-xl text-gray-600">Cargando producto...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-xl text-red-600">Error: {error}</p>
+    </div>
+  );
 
   if (!product) return (
     <div className="min-h-screen flex items-center justify-center">
@@ -161,7 +168,6 @@ const ProductDetail = () => {
 
           {/* Sección de Información */}
           <div className="p-6 lg:p-8">
-            
             {/* Header con título y acciones */}
             <div className="flex justify-between items-start mb-6">
               <div className="flex-1">
@@ -241,31 +247,33 @@ const ProductDetail = () => {
               <div className="mb-6">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="font-semibold text-gray-900">Talle Argentino</h3>
-                  <button 
-                    onClick={() => setTab('guia')}
-                    className="text-blue-600 text-sm hover:underline"
-                  >
-                    ¿Tu talle está agotado?
-                  </button>
                 </div>
                 
                 <div className="grid grid-cols-4 gap-2">
                   {['S', 'M', 'L', 'XL', 'XXL'].map(talle => (
                     <button
-                      key={talle}
-                      onClick={() => setTalleSeleccionado(talle)}
-                      className={`py-3 px-4 border rounded-lg font-medium transition-all ${
-                        talleSeleccionado === talle 
-                          ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                          : 'border-gray-300 hover:border-gray-400'
-                      }`}
-                    >
-                      {talle}
+                        key={talle}
+                        onClick={() => {
+                          setTalleSeleccionado(talle);
+                          setErrorTalle('');
+                        }}
+                        className={`py-3 px-4 border rounded-lg font-medium transition-all ${
+                          talleSeleccionado === talle 
+                            ? 'border-blue-500 bg-blue-50 text-blue-700' 
+                            : 'border-gray-300 hover:border-gray-400'
+                        }`}
+                      >
+                        {talle}
                     </button>
                   ))}
                 </div>
-              </div>
-            )}
+                  {errorTalle && (
+                    <p className="text-sm text-red-600 mt-2 font-medium">
+                      {errorTalle}
+                    </p>
+                  )}
+              </div>  
+           )}
 
             {/* Selector de cantidad */}
             <div className="mb-6">

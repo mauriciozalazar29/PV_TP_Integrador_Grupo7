@@ -3,6 +3,7 @@ import { toggleFavorite } from '../features/favorites/favoritesSlice';
 import { useNavigate } from 'react-router-dom';
 import { FiHeart } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
+import { useMemo } from 'react';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -10,10 +11,12 @@ const ProductCard = ({ product }) => {
   const favorites = useSelector(state => state.favorites);
   const isFav = favorites.includes(product.id);
 
-  const installmentValue = (product.price / 6).toLocaleString('es-AR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+  const installmentValue = useMemo(() => {
+    return (product.price / 6).toLocaleString('es-AR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }, [product.price]);
 
   const handleCardClick = () => {
     navigate(`/detail/${product.id}`);
