@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { FiSave, FiArrowLeft} from 'react-icons/fi';
+import { useState, useEffect } from 'react'; // Importa hooks de React
+import { useParams, useNavigate } from 'react-router-dom'; // Para obtener parámetros de la URL y navegar
+import { useSelector } from 'react-redux'; // Para acceder al estado global de Redux
+import { FiSave, FiArrowLeft} from 'react-icons/fi'; // Iconos de react-icons
 
+// Lista de categorías disponibles con iconos y etiquetas
 const categoriasDisponibles = [
   { value: "men's clothing", label: "Ropa Masculina", icon: "👔" },
   { value: "women's clothing", label: "Ropa Femenina", icon: "👗" },
@@ -10,13 +11,16 @@ const categoriasDisponibles = [
   { value: "jewelery", label: "Joyería", icon: "💎" }
 ];
 
+// Componente principal del formulario
 const ProductForm = ({ onSubmit }) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { id } = useParams(); // Obtiene el id de la URL (si existe)
+  const navigate = useNavigate(); // Hook para navegar entre rutas
+  // Busca el producto existente en el store si hay id (modo edición)
   const productoExistente = useSelector(state =>
     state.products.items.find(p => p.id === parseInt(id))
   );
 
+  // Estado local para los campos del formulario
   const [form, setForm] = useState({
     title: '',
     price: '',
@@ -27,9 +31,10 @@ const ProductForm = ({ onSubmit }) => {
     rating: '',
   });
 
+  // Estado para los errores de validación
   const [errors, setErrors] = useState({});
   
-
+  // Si hay producto existente, carga sus datos en el formulario
   useEffect(() => {
     if (productoExistente) {
       setForm({
@@ -44,16 +49,18 @@ const ProductForm = ({ onSubmit }) => {
     }
   }, [productoExistente]);
 
+  // Maneja cambios en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-    setImagePreviewError(false);
+    setForm(prev => ({ ...prev, [name]: value })); // Actualiza el campo correspondiente
+    setImagePreviewError(false); // (No está definido en este fragmento, pero sería para manejar errores de imagen)
     
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors(prev => ({ ...prev, [name]: '' })); // Limpia el error si el usuario corrige el campo
     }
   };
 
+  // Valida los campos del formulario antes de guardar
   const validateForm = () => {
     const newErrors = {};
     
@@ -66,32 +73,36 @@ const ProductForm = ({ onSubmit }) => {
       newErrors.rating = 'La valoración debe estar entre 0 y 5';
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors(newErrors); // Actualiza los errores en el estado
+    return Object.keys(newErrors).length === 0; // Devuelve true si no hay errores
   };
 
+  // Maneja el envío del formulario
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Previene el comportamiento por defecto del form
     
-    if (!validateForm()) return;
+    if (!validateForm()) return; // Si hay errores, no continúa
 
+    // Construye el objeto final del producto
     const productoFinal = {
       ...form,
-      id: id ? parseInt(id) : Date.now(),
+      id: id ? parseInt(id) : Date.now(), // Si hay id, lo usa; si no, genera uno nuevo
       price: parseFloat(form.price),
       stock: parseInt(form.stock) || 0,
       rating: { rate: parseFloat(form.rating) || 4.0, count: 0 },
     };
-    onSubmit(productoFinal);
-    navigate('/');
+    onSubmit(productoFinal); // Llama a la función de guardado (prop)
+    navigate('/'); // Redirige al home
   };
 
+  // Devuelve los datos de la categoría seleccionada
   const getCategoryData = (categoryValue) => {
     return categoriasDisponibles.find(cat => cat.value === categoryValue) || categoriasDisponibles[0];
   };
 
-  const currentCategory = getCategoryData(form.category);
+  const currentCategory = getCategoryData(form.category); // Categoría actual seleccionada
 
+  // Render del formulario
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Header Section */}
@@ -135,6 +146,7 @@ const ProductForm = ({ onSubmit }) => {
             </div>
           </div>
 
+          {/* Formulario principal */}
           <form onSubmit={handleSubmit} className="p-8">
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
               {/* Columna Principal - Información Básica */}
@@ -330,8 +342,6 @@ const ProductForm = ({ onSubmit }) => {
                     )}
                   </div>
                 </div>
-
-               
 
                 {/* Estadísticas del Formulario */}
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">

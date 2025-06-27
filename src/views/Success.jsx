@@ -1,5 +1,9 @@
 import { Link } from 'react-router-dom';
 
+// Success.jsx
+// Vista de confirmación de compra. Muestra mensaje de éxito y botón para volver al inicio.
+// Botón: volver al inicio.
+
 const Success = () => {
   return (
     <div className="max-w-xl mx-auto mt-12 text-center">
@@ -15,4 +19,4 @@ const Success = () => {
   );
 };
 
-export default Success;
+export default Success; // Exporta el componente para que pueda ser utilizado en otras partes de la aplicación

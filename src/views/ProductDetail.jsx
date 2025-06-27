@@ -1,3 +1,8 @@
+// ProductDetail.jsx
+// Vista de detalle de producto. Muestra info, permite elegir talle/cantidad, agregar a favoritos y al carrito.
+// Botones: agregar a favoritos, agregar al carrito, tabs de descripción/características, seleccionar talle/cantidad.
+// Si no hay producto, muestra error. Si no hay productos cargados, los pide al backend.
+
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleFavorite } from '../features/favorites/favoritesSlice';

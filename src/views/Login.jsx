@@ -1,3 +1,8 @@
+// Login.jsx
+// Componente de vista de inicio de sesión. Permite al usuario ingresar su correo electrónico y contraseña.
+// Botones: mostrar/ocultar contraseña, enviar formulario (iniciar sesión).
+// Si el inicio de sesión es exitoso, navega al home. Si falla, muestra un mensaje de error.
+
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginFailure, loginSuccess } from '../features/auth/authSlice';
@@ -5,39 +10,44 @@ import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const authError = useSelector(state => state.auth.error);
-  const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch(); // Hook para despachar acciones de Redux
+  const navigate = useNavigate(); // Hook para navegar entre rutas
+  const authError = useSelector(state => state.auth.error); // Obtiene el error de autenticación desde Redux
+  const [showPassword, setShowPassword] = useState(false); // Estado para mostrar/ocultar la contraseña
+  const [isSubmitting, setIsSubmitting] = useState(false); // Estado para manejar el envío del formulario
 
+  // Estado para manejar los datos del formulario
   const [form, setForm] = useState({
     email: '',
     password: ''
   });
 
+  // Maneja los cambios en los campos del formulario
   const handleChange = (e) => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value })); // Actualiza el estado del formulario
   };
 
+  // Maneja el envío del formulario
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+    e.preventDefault(); // Previene el comportamiento por defecto del formulario
+    setIsSubmitting(true); // Indica que se está enviando el formulario
     
-    // Simular una pequeña demora para mejor UX
+    // Simula una pequeña demora para mejorar la experiencia del usuario
     await new Promise(resolve => setTimeout(resolve, 500));
     
+    // Obtiene los usuarios almacenados en localStorage
     const users = JSON.parse(localStorage.getItem('users') || '[]');
+    // Busca el usuario que coincida con el correo y la contraseña ingresados
     const user = users.find(u => u.email === form.email && u.password === form.password);
 
     if (user) {
-      dispatch(loginSuccess({ email: user.email }));
-      navigate('/');
+      dispatch(loginSuccess({ email: user.email })); // Despacha la acción de inicio de sesión exitoso
+      navigate('/'); // Redirige al home
     } else {
-      dispatch(loginFailure('Credenciales inválidas'));
+      dispatch(loginFailure('Credenciales inválidas')); // Despacha la acción de fallo en el inicio de sesión
     }
     
-    setIsSubmitting(false);
+    setIsSubmitting(false); // Indica que el envío ha finalizado
   };
 
   return (
@@ -54,7 +64,7 @@ const Login = () => {
         
         {authError && (
           <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
-            <p className="text-sm text-red-700 dark:text-red-300">{authError}</p>
+            <p className="text-sm text-red-700 dark:text-red-300">{authError}</p> {/* Muestra el mensaje de error si existe */}
           </div>
         )}
 
@@ -71,7 +81,7 @@ const Login = () => {
                 autoComplete="email"
                 required
                 value={form.email}
-                onChange={handleChange}
+                onChange={handleChange} // Maneja el cambio en el campo de correo
                 className="appearance-none relative block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700"
                 placeholder="tucorreo@ejemplo.com"
               />
@@ -85,18 +95,18 @@ const Login = () => {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? "text" : "password"} // Cambia el tipo de entrada según el estado de mostrar/ocultar
                   autoComplete="current-password"
                   required
                   value={form.password}
-                  onChange={handleChange}
+                  onChange={handleChange} // Maneja el cambio en el campo de contraseña
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 pr-10"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword(!showPassword)} // Cambia el estado de mostrar/ocultar contraseña
                 >
                   {showPassword ? (
                     <FaEyeSlash className="h-5 w-5 text-gray-400 hover:text-gray-500" />
@@ -131,7 +141,7 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting} // Desactiva el botón mientras se está enviando el formulario
               className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${
                 isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
               }`}
@@ -162,4 +172,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login; // Exporta el componente para ser utilizado en otras partes de la aplicación
