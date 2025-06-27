@@ -1,31 +1,35 @@
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addToCart } from '../features/cart/cartSlice';
 import ProductCard from '../components/ProductCard';
+import { fetchProducts } from '../features/products/productsSlice';
 
 const Favorites = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const favorites = useSelector(state => state.favorites);
   const products = useSelector(state => state.products.items);
+  const loading = useSelector(state => state.products.loading);
   
   // Estados para filtros
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
   // Obtener productos favoritos
-  const favProducts = products.filter(p => favorites.includes(p.id));
+  const favProducts = useMemo(() => products.filter(p => favorites.includes(p.id)), [products, favorites]);
 
   // Obtener categorías únicas de los favoritos
-  const getUniqueCategories = () => {
+  const getUniqueCategories = useMemo(() => {
     const categories = [...new Set(favProducts.map(p => p.category))];
     return ['Todos', ...categories];
-  };
+  }, [favProducts]);
 
   // Filtrar productos por categoría
-  const filteredProducts = selectedCategory === 'Todos' 
-    ? favProducts 
-    : favProducts.filter(p => p.category === selectedCategory);
+  const filteredProducts = useMemo(() => {
+    return selectedCategory === 'Todos' 
+      ? favProducts 
+      : favProducts.filter(p => p.category === selectedCategory);
+  }, [favProducts, selectedCategory]);
 
   // Agregar todos los productos al carrito
   const handleAddAllToCart = () => {
@@ -42,6 +46,12 @@ const Favorites = () => {
     // Navegar al carrito después de agregar los productos
     navigate('/cart');
   };
+
+  useEffect(() => {
+    if (products.length === 0) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, products.length]);
 
   const EmptyState = () => (
     <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
@@ -90,18 +100,12 @@ const Favorites = () => {
             {selectedCategory !== 'Todos' && ` en ${selectedCategory}`}
           </p>
         </div>
-        
-        {favProducts.length > 0 && (
-          <div className="flex items-center gap-3">
-            {/* Aquí se pueden agregar otros botones en el futuro */}
-          </div>
-        )}
       </div>
       
       {/* Filtros de categoría como chips */}
       {favProducts.length > 0 && (
         <div className="mt-6 flex flex-wrap gap-2">
-          {getUniqueCategories().map(category => (
+          {getUniqueCategories.map(category => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
@@ -122,26 +126,6 @@ const Favorites = () => {
   const QuickActions = () => {
     if (filteredProducts.length === 0) return null;
     
-    return (
-      <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-1">
-              ¿Te gustan todos estos productos?
-            </h3>
-            <p className="text-sm text-gray-600">
-              Agrega {filteredProducts.length} {filteredProducts.length === 1 ? 'producto' : 'productos'} al carrito de una vez
-            </p>
-          </div>
-          <button 
-            onClick={handleAddAllToCart}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors whitespace-nowrap"
-          >
-            Agregar todos al carrito
-          </button>
-        </div>
-      </div>
-    );
   };
 
   const ProductsGrid = () => (
@@ -190,12 +174,16 @@ const Favorites = () => {
     );
   };
 
+  // Reemplazar el return principal para mostrar loader si loading
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <FavoritesHeader />
-        
-        {favProducts.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center min-h-[40vh]">
+            <p className="text-gray-500 text-lg">Cargando productos...</p>
+          </div>
+        ) : favProducts.length === 0 ? (
           <EmptyState />
         ) : (
           <>

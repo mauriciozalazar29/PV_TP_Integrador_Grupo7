@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { FiSave, FiArrowLeft} from 'react-icons/fi';
 
 const categoriasDisponibles = [
   { value: "men's clothing", label: "Ropa Masculina", icon: "👔" },
@@ -357,22 +358,39 @@ const ProductForm = ({ onSubmit }) => {
             </div>
 
             {/* Botones de Acción */}
-           <div className="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-gray-200">
-  <button
-    type="button"
-    onClick={() => navigate('/')}
-    className="flex-1 px-4 py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center space-x-2 group"
-  >
-    <span className="text-sm group-hover:scale-110 transition-transform">❌</span>
-  </button>
-  
-  <button
-    type="submit"
-    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-indigo-800 transform hover:scale-[1.02] transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center space-x-2 group"
-  >
-    <span className="text-sm group-hover:scale-110 transition-transform">💾</span>
-  </button>
-</div>
+           <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                title="Cancelar"
+                className="flex-1 group relative p-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 flex items-center justify-center overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-50 to-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <FiArrowLeft className="text-xl group-hover:scale-110 group-hover:-translate-x-1 transition-transform duration-300 relative z-10" />
+                
+                {/* Tooltip */}
+                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                  Cancelar
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                </div>
+              </button>
+              
+              <button
+                type="submit"
+                title="Guardar"
+                className="flex-1 group relative p-3 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-xl font-medium hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800 transform hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-300"></div>
+                <FiSave className="text-xl group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300 relative z-10" />
+                
+                {/* Tooltip */}
+                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                  Guardar
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                </div>
+              </button>
+            </div>
           </form>
         </div>
       </div>
