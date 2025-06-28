@@ -163,10 +163,9 @@ const Favorites = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-10">
+      <div className="max-w-5xl mx-auto px-2 sm:px-4">
         <FavoritesHeader />
-        
         {loading ? (
           <div className="flex justify-center items-center min-h-[40vh]">
             <p className="text-gray-500 text-lg">Cargando productos...</p>
@@ -176,7 +175,9 @@ const Favorites = () => {
         ) : (
           <>
             <CategoryFilters />
-            <ProductsGrid />
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+              <ProductsGrid />
+            </div>
             <RecommendedSection />
           </>
         )}

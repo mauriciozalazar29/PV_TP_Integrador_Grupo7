@@ -23,34 +23,30 @@ const HeroSlider = () => {
 
   return (
     <div className="w-full mx-auto mb-4 max-w-full px-1 xs:px-2 sm:px-4">
-
+      {/* Slider */}
       <div className="relative overflow-hidden rounded-xl shadow-2xl group 
-                      w-full
-                      h-32 xs:h-40 sm:h-56 md:h-64 lg:h-72 xl:h-80 2xl:h-96
-                      min-h-[120px] max-h-[400px] bg-gray-100">
-              <div className="relative w-full h-full overflow-hidden">
-                {images.map((image, index) => (
-                  <div
-                    key={index}
-                    className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                      index === current 
-                        ? 'opacity-100 scale-100 z-10' 
-                        : 'opacity-0 scale-105 z-0'
-                    }`}
-                  >
-                    <img
-                      src={image}
-                      alt={`Promoción ${index + 1}`}
-                      className={`w-full h-full ${
-                        image === promo5 
-                          ? 'object-contain object-center' 
-                          : 'object-cover object-center'
-                      }`}
-                      loading={index === 0 ? "eager" : "lazy"}
-                    />
-                  </div>
-                ))}
-              </div>
+                      w-full aspect-[16/8] sm:aspect-[16/9] md:aspect-[16/8] lg:aspect-[16/7] max-h-[600px] bg-gray-100">
+        <div className="relative w-full h-full overflow-hidden">
+          {images.map((image, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+                index === current 
+                  ? 'opacity-100 scale-100 z-10' 
+                  : 'opacity-0 scale-105 z-0'
+              }`}
+            >
+              <img
+                src={image}
+                alt={`Promoción ${index + 1}`}
+                className="w-full h-full object-contain object-center"
+                loading={index === 0 ? "eager" : "lazy"}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Botón anterior */}
         <button
           onClick={prev}
           className="absolute top-1/2 left-1 sm:left-2 transform -translate-y-1/2 
@@ -67,7 +63,8 @@ const HeroSlider = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        
+
+        {/* Botón siguiente */}
         <button
           onClick={next}
           className="absolute top-1/2 right-1 sm:right-2 transform -translate-y-1/2 
@@ -85,6 +82,7 @@ const HeroSlider = () => {
           </svg>
         </button>
 
+        {/* Indicadores */}
         <div className="absolute bottom-3 sm:bottom-4 left-1/2 transform -translate-x-1/2 
                         flex gap-1.5 sm:gap-2 bg-black/20 backdrop-blur-md rounded-full px-2 py-1.5 z-30">
           {images.map((_, index) => (
@@ -103,14 +101,14 @@ const HeroSlider = () => {
         </div>
       </div>
 
-      <div className="mt-2 sm:mt-4 overflow-hidden rounded-lg sm:rounded-xl shadow-lg
-                      h-8 xs:h-10 sm:h-14 md:h-20 lg:h-24 xl:h-28
-                      min-h-[32px] max-h-[80px] sm:max-h-[120px] bg-gray-50
-                      hover:shadow-xl transition-shadow duration-300 flex items-center w-full">
+      {/* Promoción fija */}
+      <div className="mt-3 sm:mt-6 overflow-hidden rounded-xl shadow-xl
+                      h-[60px] sm:h-[80px] md:h-[100px] lg:h-[120px] xl:h-[140px]
+                      bg-white w-full">
         <img
           src={promoFija}
           alt="Promoción Mercado Pago - 3 y 6 cuotas sin interés"
-          className="w-full h-full object-contain object-center
+          className="w-full h-full object-cover object-center
                      hover:scale-[1.02] transition-transform duration-300"
           loading="lazy"
         />

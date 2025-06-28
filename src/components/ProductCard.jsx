@@ -35,11 +35,11 @@ const ProductCard = ({ product }) => {
 
   return (
     <div
-      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 w-full sm:max-w-full max-w-xs mx-auto flex flex-col h-full cursor-pointer border border-gray-100 hover:border-gray-200 min-w-0 mb-4"
+      className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 w-full sm:max-w-full max-w-sm mx-auto flex flex-col h-full cursor-pointer border border-gray-100 hover:border-gray-200 min-w-0 mb-6 p-2"
       onClick={handleCardClick}
     >
-      <div className="relative" style={{ height: '180px' }}>
-        <div className="absolute inset-0 bg-gray-50 flex items-center justify-center p-2">
+      <div className="relative" style={{ height: '220px' }}>
+        <div className="absolute inset-0 bg-gray-50 flex items-center justify-center p-3">
           <img
             src={product.image}
             alt={product.title}
