@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginFailure, loginSuccess } from '../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -32,9 +33,11 @@ const Login = () => {
 
     if (user) {
       dispatch(loginSuccess({ email: user.email }));
+      toast.success('¡Inicio de sesión exitoso!');
       navigate('/');
     } else {
       dispatch(loginFailure('Credenciales inválidas'));
+      toast.error('Credenciales inválidas');
     }
     
     setIsSubmitting(false);
@@ -51,12 +54,12 @@ const Login = () => {
             Ingresa tus credenciales para acceder
           </p>
         </div>
-        
-        {authError && (
+
+        {/* {authError && (
           <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
             <p className="text-sm text-red-700 dark:text-red-300">{authError}</p>
           </div>
-        )}
+        )} */}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">

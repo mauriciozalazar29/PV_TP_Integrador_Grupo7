@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaUser } from 'react-icons/fa';
 import { MdEmail, MdLock, MdLockOutline } from 'react-icons/md';
+import { toast } from 'react-toastify';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -28,24 +29,31 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     const { email, password, confirmPassword, name } = form;
 
     // Validaciones
     if (!validateEmail(email)) {
-      setError('El correo electrónico no tiene un formato válido.');
+      toast.error('El correo electrónico no tiene un formato válido.');
       setIsSubmitting(false);
       return;
     }
-
+    if (name && name.trim().length < 3) {
+      toast.error('El nombre debe tener al menos 3 caracteres si se ingresa.');
+      setIsSubmitting(false);
+      return;
+    }
+    if (name && !/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/.test(name.trim())) {
+      toast.error('El nombre solo debe contener letras y espacios.');
+      setIsSubmitting(false);
+      return;
+    }
     if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres.');
+      toast.error('La contraseña debe tener al menos 6 caracteres.');
       setIsSubmitting(false);
       return;
     }
-
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden.');
+      toast.error('Las contraseñas no coinciden.');
       setIsSubmitting(false);
       return;
     }
@@ -56,7 +64,7 @@ const Register = () => {
     const users = JSON.parse(localStorage.getItem('users')) || [];
 
     if (users.find(u => u.email === email)) {
-      setError('Este correo ya está registrado.');
+      toast.error('Este correo ya está registrado.');
       setIsSubmitting(false);
       return;
     }
@@ -66,6 +74,7 @@ const Register = () => {
     localStorage.setItem('users', JSON.stringify(users));
 
     setSuccess('Registro exitoso. Redirigiendo al login...');
+    toast.success('¡Registro exitoso! Redirigiendo al login...');
     setTimeout(() => navigate('/login'), 2000);
     setIsSubmitting(false);
   };
@@ -82,17 +91,16 @@ const Register = () => {
           </p>
         </div>
 
-        {error && (
+        {/* {error && (
           <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
             <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
           </div>
-        )}
-
-        {success && (
+        )} */}
+        {/* {success && (
           <div className="rounded-md bg-green-50 dark:bg-green-900/20 p-4">
             <p className="text-sm text-green-700 dark:text-green-300">{success}</p>
           </div>
-        )}
+        )} */}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">

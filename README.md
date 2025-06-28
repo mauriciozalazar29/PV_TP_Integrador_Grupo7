@@ -213,6 +213,12 @@ Y en `src/index.css` importá:
 npm install react-icons
 ```
 
+### 🔔 React Toastify (Notificaciones)
+
+```bash
+npm install react-toastify
+```
+
 ---
 
 ## ✅ Buenas Prácticas Aplicadas

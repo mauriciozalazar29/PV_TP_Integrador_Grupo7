@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiHeart } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
 import { useMemo } from 'react';
+import { toast } from 'react-toastify';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -25,6 +26,11 @@ const ProductCard = ({ product }) => {
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
     dispatch(toggleFavorite(product.id));
+    if (!isFav) {
+      toast.success('Producto agregado a favoritos');
+    } else {
+      toast.info('Producto quitado de favoritos');
+    }
   };
 
   return (

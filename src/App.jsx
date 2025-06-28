@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import PrivateRoute from './components/PrivateRoute';
 import Home from './views/Home';
 import Favorites from './views/Favorites';
@@ -12,6 +13,7 @@ import Checkout from './views/Checkout';
 import Success from './views/Success';
 import Register from './views/Register';
 import Login from './views/Login';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
@@ -64,6 +66,7 @@ const App = () => {
         </Routes>
       </main>
       <Footer />
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
     </Router>
   );
 };

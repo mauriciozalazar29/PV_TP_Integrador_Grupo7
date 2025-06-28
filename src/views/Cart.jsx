@@ -163,7 +163,7 @@ const Cart = () => {
 
                 <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
                   <p className="text-sm text-green-700 font-medium">
-                    🚚 Envío gratis en compras superiores a $50
+                    🚚 Envío gratis en compras superiores a $100
                   </p>
                 </div>
               </div>

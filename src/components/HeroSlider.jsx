@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import promo1 from '../assets/promo1.webp';
 import promo2 from '../assets/promo2.webp';
 import promo3 from '../assets/promo3.webp';
+import promo5 from '../assets/promo5.webp';
 import promoFija from '../assets/promo4.webp';
 
-const images = [promo1, promo2, promo3];
+const images = [promo1, promo2, promo3, promo5];
 
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
@@ -27,30 +28,29 @@ const HeroSlider = () => {
                       w-full
                       h-32 xs:h-40 sm:h-56 md:h-64 lg:h-72 xl:h-80 2xl:h-96
                       min-h-[120px] max-h-[400px] bg-gray-100">
-        
-        <div className="relative w-full h-full">
-          {images.map((image, index) => (
-            <div
-              key={index}
-              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                index === current 
-                  ? 'opacity-100 scale-100 z-10' 
-                  : 'opacity-0 scale-105 z-0'
-              }`}
-            >
-              <img
-                src={image}
-                alt={`Promoción ${index + 1}`}
-                className="w-full h-full object-cover object-center"
-                loading={index === 0 ? "eager" : "lazy"}
-                style={{ objectPosition: 'center center' }}
-              />
-            </div>
-          ))}
-   
-          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent z-20"></div>
-        </div>
-
+              <div className="relative w-full h-full overflow-hidden">
+                {images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+                      index === current 
+                        ? 'opacity-100 scale-100 z-10' 
+                        : 'opacity-0 scale-105 z-0'
+                    }`}
+                  >
+                    <img
+                      src={image}
+                      alt={`Promoción ${index + 1}`}
+                      className={`w-full h-full ${
+                        image === promo5 
+                          ? 'object-contain object-center' 
+                          : 'object-cover object-center'
+                      }`}
+                      loading={index === 0 ? "eager" : "lazy"}
+                    />
+                  </div>
+                ))}
+              </div>
         <button
           onClick={prev}
           className="absolute top-1/2 left-1 sm:left-2 transform -translate-y-1/2 

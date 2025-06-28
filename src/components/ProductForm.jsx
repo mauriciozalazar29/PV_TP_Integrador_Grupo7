@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FiSave, FiArrowLeft} from 'react-icons/fi';
+import { toast } from 'react-toastify';
 
 const categoriasDisponibles = [
   { value: "men's clothing", label: "Ropa Masculina", icon: "👔" },
@@ -21,16 +22,20 @@ const ProductForm = ({ onSubmit }) => {
     title: '',
     price: '',
     description: '',
-    category: "men's clothing",
+    category: id ? '' : '', // se inicializa vacío, pero se setea en useEffect si es edición
     image: '',
     stock: '',
     rating: '',
   });
 
   const [errors, setErrors] = useState({});
-  
+  const [touched, setTouched] = useState({});
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
+    if (formError && validateForm()) {
+      setFormError("");
+    }
     if (productoExistente) {
       setForm({
         title: productoExistente.title,
@@ -42,21 +47,55 @@ const ProductForm = ({ onSubmit }) => {
         rating: productoExistente.rating?.rate ?? 4.0,
       });
     }
-  }, [productoExistente]);
+  }, [productoExistente, formError]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
     setImagePreviewError(false);
-    
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+    if (touched[name]) {
+      validateField(name, value);
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    setTouched(prev => ({ ...prev, [name]: true }));
+    validateField(name, value);
+  };
+
+  const validateField = (name, value) => {
+    let error = '';
+    switch (name) {
+      case 'title':
+        error = value.trim() ? '' : 'El título es requerido';
+        break;
+      case 'price':
+        error = !value || parseFloat(value) <= 0 ? 'El precio debe ser mayor a 0' : '';
+        break;
+      case 'description':
+        error = value.trim() ? '' : 'La descripción es requerida';
+        break;
+      case 'image':
+        error = value.trim() ? '' : 'La URL de imagen es requerida';
+        break;
+      case 'stock':
+        error = !value || parseInt(value) < 0 ? 'El stock debe ser mayor o igual a 0' : '';
+        break;
+      case 'rating':
+        error = value && (parseFloat(value) < 0 || parseFloat(value) > 5) ? 'La valoración debe estar entre 0 y 5' : '';
+        break;
+      default:
+        break;
+    }
+    setErrors(prev => ({ ...prev, [name]: error }));
   };
 
   const validateForm = () => {
     const newErrors = {};
-    
     if (!form.title.trim()) newErrors.title = 'El título es requerido';
     if (!form.price || parseFloat(form.price) <= 0) newErrors.price = 'El precio debe ser mayor a 0';
     if (!form.description.trim()) newErrors.description = 'La descripción es requerida';
@@ -65,16 +104,18 @@ const ProductForm = ({ onSubmit }) => {
     if (form.rating && (parseFloat(form.rating) < 0 || parseFloat(form.rating) > 5)) {
       newErrors.rating = 'La valoración debe estar entre 0 y 5';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
-
+    if (!validateForm()) {
+      setTouched({ title: true, price: true, description: true, image: true, stock: true, rating: true });
+      setFormError("Por favor, completa todos los campos obligatorios correctamente.");
+      return;
+    }
+    setFormError("");
     const productoFinal = {
       ...form,
       id: id ? parseInt(id) : Date.now(),
@@ -83,6 +124,7 @@ const ProductForm = ({ onSubmit }) => {
       rating: { rate: parseFloat(form.rating) || 4.0, count: 0 },
     };
     onSubmit(productoFinal);
+    toast.success(id ? 'Producto editado exitosamente' : 'Producto creado exitosamente');
     navigate('/');
   };
 
@@ -136,6 +178,11 @@ const ProductForm = ({ onSubmit }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="p-8">
+            {formError && (
+              <div className="mb-4 p-3 rounded bg-red-100 text-red-800 text-center font-semibold border border-red-300 animate-pulse">
+                {formError}
+              </div>
+            )}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
               {/* Columna Principal - Información Básica */}
               <div className="xl:col-span-2 space-y-8">
@@ -149,14 +196,15 @@ const ProductForm = ({ onSubmit }) => {
                     name="title"
                     value={form.title}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     placeholder="Ej. iPhone 15 Pro Max 256GB"
                     className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
-                      errors.title 
-                        ? 'border-red-400 focus:border-red-500' 
+                      errors.title && touched.title
+                        ? 'border-red-400 focus:border-red-500'
                         : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                     }`}
                   />
-                  {errors.title && (
+                  {errors.title && touched.title && (
                     <div className="flex items-center space-x-2 text-red-600 text-sm">
                       <span>⚠️</span>
                       <span>{errors.title}</span>
@@ -174,15 +222,16 @@ const ProductForm = ({ onSubmit }) => {
                     name="description"
                     value={form.description}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     placeholder="Describe las características principales, beneficios y especificaciones técnicas del producto..."
                     rows="6"
                     className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 resize-none ${
-                      errors.description 
-                        ? 'border-red-400 focus:border-red-500' 
+                      errors.description && touched.description
+                        ? 'border-red-400 focus:border-red-500'
                         : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                     }`}
                   />
-                  {errors.description && (
+                  {errors.description && touched.description && (
                     <div className="flex items-center space-x-2 text-red-600 text-sm">
                       <span>⚠️</span>
                       <span>{errors.description}</span>
@@ -207,15 +256,16 @@ const ProductForm = ({ onSubmit }) => {
                         step="0.01"
                         value={form.price}
                         onChange={handleChange}
+                        onBlur={handleBlur}
                         placeholder="0.00"
                         className={`w-full pl-8 pr-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
-                          errors.price 
-                            ? 'border-red-400 focus:border-red-500' 
+                          errors.price && touched.price
+                            ? 'border-red-400 focus:border-red-500'
                             : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                         }`}
                       />
                     </div>
-                    {errors.price && (
+                    {errors.price && touched.price && (
                       <div className="flex items-center space-x-2 text-red-600 text-sm">
                         <span>⚠️</span>
                         <span>{errors.price}</span>
@@ -232,8 +282,12 @@ const ProductForm = ({ onSubmit }) => {
                       name="category"
                       value={form.category}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       className="w-full px-4 py-3.5 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 hover:border-gray-400 transition-all duration-200 bg-white"
                     >
+                      {!form.category && (
+                        <option value="" disabled>Selecciona una categoría...</option>
+                      )}
                       {categoriasDisponibles.map((cat, i) => (
                         <option key={i} value={cat.value}>
                           {cat.icon} {cat.label}
@@ -256,14 +310,15 @@ const ProductForm = ({ onSubmit }) => {
                       min="0"
                       value={form.stock}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       placeholder="Cantidad en inventario"
                       className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
-                        errors.stock 
-                          ? 'border-red-400 focus:border-red-500' 
+                        errors.stock && touched.stock
+                          ? 'border-red-400 focus:border-red-500'
                           : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                       }`}
                     />
-                    {errors.stock && (
+                    {errors.stock && touched.stock && (
                       <div className="flex items-center space-x-2 text-red-600 text-sm">
                         <span>⚠️</span>
                         <span>{errors.stock}</span>
@@ -284,14 +339,15 @@ const ProductForm = ({ onSubmit }) => {
                       min="0"
                       value={form.rating}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       placeholder="4.5"
                       className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
-                        errors.rating 
-                          ? 'border-red-400 focus:border-red-500' 
+                        errors.rating && touched.rating
+                          ? 'border-red-400 focus:border-red-500'
                           : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                       }`}
                     />
-                    {errors.rating && (
+                    {errors.rating && touched.rating && (
                       <div className="flex items-center space-x-2 text-red-600 text-sm">
                         <span>⚠️</span>
                         <span>{errors.rating}</span>
@@ -314,15 +370,15 @@ const ProductForm = ({ onSubmit }) => {
                       name="image"
                       value={form.image}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       placeholder="https://ejemplo.com/imagen.jpg"
                       className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
-                        errors.image 
-                          ? 'border-red-400 focus:border-red-500' 
+                        errors.image && touched.image
+                          ? 'border-red-400 focus:border-red-500'
                           : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                       }`}
                     />
-                    
-                    {errors.image && (
+                    {errors.image && touched.image && (
                       <div className="flex items-center space-x-2 text-red-600 text-sm">
                         <span>⚠️</span>
                         <span>{errors.image}</span>

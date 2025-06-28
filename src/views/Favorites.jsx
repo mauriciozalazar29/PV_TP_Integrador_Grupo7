@@ -101,21 +101,6 @@ const Favorites = () => {
     </div>
   );
 
-  const QuickActions = () => {
-    if (filteredProducts.length === 0) return null;
-    
-    return (
-      <div className="mb-6 flex justify-end">
-        <button
-          onClick={handleAddAllToCart}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-        >
-          Agregar todos al carrito
-        </button>
-      </div>
-    );
-  };
-
   const ProductsGrid = () => (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       {filteredProducts.length > 0 ? (
@@ -191,7 +176,6 @@ const Favorites = () => {
         ) : (
           <>
             <CategoryFilters />
-            <QuickActions />
             <ProductsGrid />
             <RecommendedSection />
           </>

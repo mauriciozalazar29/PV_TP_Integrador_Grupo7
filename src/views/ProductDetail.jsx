@@ -4,6 +4,7 @@ import { toggleFavorite } from '../features/favorites/favoritesSlice';
 import { addToCart } from '../features/cart/cartSlice';
 import { useState, useMemo, useEffect } from 'react';
 import { fetchProducts } from '../features/products/productsSlice';
+import { toast } from 'react-toastify';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -74,25 +75,23 @@ const ProductDetail = () => {
   };
 
   const agregarAlCarrito = () => {
-  if (mostrarTalles && !talleSeleccionado) {
-    setErrorTalle('Seleccioná un talle antes de continuar.');
-    return;
-  }
-
-  setErrorTalle(''); // Limpiamos el error si ya se eligió un talle
-
-  const item = {
-    id: product.id,
-    title: product.title,
-    price: product.price,
-    image: product.image,
-    size: mostrarTalles ? talleSeleccionado : null,
-    quantity: cantidad,
+    if (mostrarTalles && !talleSeleccionado) {
+      setErrorTalle('Seleccioná un talle antes de continuar.');
+      return;
+    }
+    setErrorTalle('');
+    const item = {
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      image: product.image,
+      size: mostrarTalles ? talleSeleccionado : null,
+      quantity: cantidad,
+    };
+    dispatch(addToCart(item));
+    toast.success('Producto agregado al carrito');
+    navigate('/cart');
   };
-
-  dispatch(addToCart(item));
-  navigate('/cart');
-};
 
 
   if (loading) return (

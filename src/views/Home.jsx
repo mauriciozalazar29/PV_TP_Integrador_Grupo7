@@ -54,14 +54,15 @@ const Home = () => {
     return arr;
   }, [filtered, sort]);
 
-  return (
+ return (
     <div className="p-4">
       <HeroSlider />
-      <div className="flex justify-end mb-4">
+      {/* Contenedor para alinear el select a la izquierda y limitar el ancho */}
+      <div className="flex justify-start my-4">
         <select
           value={sort}
           onChange={e => setSort(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 w-auto min-w-[180px]"
         >
           <option value="">Ordenar por...</option>
           <option value="price-asc">Precio: menor a mayor</option>
@@ -70,15 +71,15 @@ const Home = () => {
           <option value="za">Nombre: Z a A</option>
         </select>
       </div>
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 px-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-7xl mx-auto px-3 md:px-6 py-4 bg-gradient-to-b from-blue-50 to-white rounded-xl shadow-md">
         {loading ? (
-          <p className="col-span-full text-center text-gray-500">Cargando productos...</p>
+          <p className="col-span-full text-center text-gray-500 text-lg font-medium">Cargando productos...</p>
         ) : sorted.length > 0 ? (
           sorted.map(product => (
             <ProductCard key={product.id} product={product} />
           ))
         ) : (
-          <p className="col-span-full text-center text-gray-500">
+          <p className="col-span-full text-center text-gray-500 text-lg font-medium">
             {search ? "No se encontraron productos que coincidan con tu búsqueda." : "No hay productos disponibles."}
           </p>
         )}
