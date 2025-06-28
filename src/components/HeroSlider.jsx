@@ -21,12 +21,12 @@ const HeroSlider = () => {
   const prev = () => setCurrent(prev => (prev - 1 + images.length) % images.length);
 
   return (
-    <div className="w-full mx-auto mb-4 max-w-screen-2xl px-2 sm:px-4">
+    <div className="w-full mx-auto mb-4 max-w-full px-1 xs:px-2 sm:px-4">
 
       <div className="relative overflow-hidden rounded-xl shadow-2xl group 
                       w-full
-                      h-40 xs:h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 2xl:h-96
-                      min-h-[160px] max-h-[400px] bg-gray-100">
+                      h-32 xs:h-40 sm:h-56 md:h-64 lg:h-72 xl:h-80 2xl:h-96
+                      min-h-[120px] max-h-[400px] bg-gray-100">
         
         <div className="relative w-full h-full">
           {images.map((image, index) => (
@@ -103,14 +103,14 @@ const HeroSlider = () => {
         </div>
       </div>
 
-      <div className="mt-3 sm:mt-4 overflow-hidden rounded-lg sm:rounded-xl shadow-lg
-                      h-14 sm:h-16 md:h-20 lg:h-24 xl:h-28
-                      min-h-[56px] max-h-[120px] bg-gray-50
-                      hover:shadow-xl transition-shadow duration-300">
+      <div className="mt-2 sm:mt-4 overflow-hidden rounded-lg sm:rounded-xl shadow-lg
+                      h-8 xs:h-10 sm:h-14 md:h-20 lg:h-24 xl:h-28
+                      min-h-[32px] max-h-[80px] sm:max-h-[120px] bg-gray-50
+                      hover:shadow-xl transition-shadow duration-300 flex items-center w-full">
         <img
           src={promoFija}
           alt="Promoción Mercado Pago - 3 y 6 cuotas sin interés"
-          className="w-full h-full object-cover object-center 
+          className="w-full h-full object-contain object-center
                      hover:scale-[1.02] transition-transform duration-300"
           loading="lazy"
         />

@@ -33,17 +33,17 @@ const NavBar = () => {
   }, [localSearch, dispatch]);
 
   return (
-    <nav className="bg-white shadow-md border-b border-gray-100 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <nav className="bg-white shadow-md border-b border-gray-100 sticky top-0 z-50 w-full overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 w-full">
+        <div className="flex flex-col sm:flex-row items-center justify-between h-auto sm:h-16 w-full gap-2 sm:gap-0">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-            <FaShoppingBag className="text-2xl text-black-600" />
-            <span className="font-bold text-gray-800 hidden sm:block">TIENDAMIA</span>
+            <img src="/src/assets/favicon.ico" alt="Logo" className="w-8 h-8" />
+            <span className="font-bold text-gray-800">TIENDAMIA</span>
           </Link>
           {/* Search */}
-          <div className="flex-1 mx-6">
-            <div className="flex items-center rounded-full border border-gray-300 px-4 py-2 w-full max-w-xl mx-auto">
+          <div className="flex-1 mx-2 sm:mx-10 w-full">
+            <div className="flex items-center rounded-full border border-gray-300 px-2 sm:px-4 py-2 w-full max-w-xl mx-auto">
               <input
                 type="text"
                 placeholder="Buscar..."
@@ -69,7 +69,7 @@ const NavBar = () => {
           </div>
 
           {/* Icons */}
-          <div className="flex items-center gap-1 sm:gap-3">
+          <div className="flex items-center gap-1 sm:gap-3 w-full justify-end flex-wrap">
             <Link to="/favorites" className="p-2 rounded-lg hover:bg-gray-50 transition-colors" title="Favoritos">
               <FaHeart className="text-xl text-red-600" />
             </Link>

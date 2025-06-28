@@ -29,18 +29,18 @@ const ProductCard = ({ product }) => {
 
   return (
     <div
-      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 w-full mx-auto flex flex-col h-full cursor-pointer border border-gray-100 hover:border-gray-200"
+      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 w-full sm:max-w-full max-w-xs mx-auto flex flex-col h-full cursor-pointer border border-gray-100 hover:border-gray-200 min-w-0 mb-4"
       onClick={handleCardClick}
     >
-      <div className="relative" style={{ height: '200px' }}>
-        <div className="absolute inset-0 bg-gray-50 flex items-center justify-center p-4">
+      <div className="relative" style={{ height: '180px' }}>
+        <div className="absolute inset-0 bg-gray-50 flex items-center justify-center p-2">
           <img
             src={product.image}
             alt={product.title}
-            className="max-h-full max-w-full object-contain transition-transform duration-300 hover:scale-105"
+            className="max-h-full max-w-full object-contain transition-transform duration-300 hover:scale-105 w-full h-full"
             onError={(e) => {
               e.target.src = 'https://via.placeholder.com/400x400?text=Imagen+no+disponible';
-              e.target.className = 'max-h-full max-w-full object-cover';
+              e.target.className = 'max-h-full max-w-full object-cover w-full h-full';
             }}
           />
         </div>
@@ -58,16 +58,16 @@ const ProductCard = ({ product }) => {
         </button>
       </div>
 
-      <div className="p-4 flex flex-col flex-grow">
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+      <div className="p-2 flex flex-col flex-grow min-w-0">
+        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider truncate">
           {product.brand}
         </span>
 
-        <h3 className="text-[15px] font-medium text-gray-900 line-clamp-2 mt-2 leading-snug">
+        <h3 className="text-[15px] font-medium text-gray-900 line-clamp-2 mt-2 leading-snug truncate">
           {product.title}
         </h3>
         <div className="mt-auto space-y-1">
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-baseline gap-2 flex-wrap">
             <span className="text-lg font-bold text-gray-900">
               ${product.price.toLocaleString('es-AR')}
             </span>
