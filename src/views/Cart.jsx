@@ -9,6 +9,8 @@ const Cart = () => {
   const navigate = useNavigate();
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const envioGratis = total >= 100;
+  const costoEnvio = envioGratis ? 0 : 10;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-10">
@@ -46,28 +48,44 @@ const Cart = () => {
                 </div>
                 <div className="divide-y divide-gray-100">
                   {cart.map((item, i) => (
-                    <div key={i} className="p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-4 items-center">
+                    <div key={i} className="p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-4 items-stretch">
                       {/* Product Image */}
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 self-center sm:self-auto">
                         <img 
                           src={item.image} 
                           alt={item.title} 
                           className="w-24 h-24 object-contain rounded-xl border border-gray-200 bg-white shadow-sm" 
                         />
                       </div>
-                      {/* Product Info */}
-                      <div className="flex-1 min-w-0 w-full">
-                        <h3 className="font-semibold text-gray-800 mb-1 line-clamp-2 text-lg">{item.title}</h3>
-                        {item.size && (
-                          <div className="flex items-center gap-1 mb-2">
-                            <span className="text-sm text-gray-500">Talle:</span>
-                            <span className="text-sm font-medium text-gray-700 bg-gray-100 px-2 py-1 rounded">
-                              {item.size}
-                            </span>
+                      {/* Product Info + Price */}
+                      <div className="flex-1 min-w-0 w-full flex flex-col gap-2 justify-between">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 w-full">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-800 mb-1 line-clamp-2 text-lg">{item.title}</h3>
+                            {item.size && (
+                              <div className="flex items-center gap-1 mb-2">
+                                <span className="text-sm text-gray-500">Talle:</span>
+                                <span className="text-sm font-medium text-gray-700 bg-gray-100 px-2 py-1 rounded">
+                                  {item.size}
+                                </span>
+                              </div>
+                            )}
                           </div>
-                        )}
-                        <div className="flex flex-col sm:flex-row items-center justify-between mt-3 gap-2">
-                          <div className="flex items-center gap-3">
+                          {/* Price: left in mobile, right in desktop */}
+                          <div className="text-left sm:text-right flex-shrink-0 min-w-[90px]">
+                            <div className="text-lg font-bold text-gray-800">
+                              ${(item.price * item.quantity).toFixed(2)}
+                            </div>
+                            {item.quantity > 1 && (
+                              <div className="text-sm text-gray-500">
+                                ${item.price.toFixed(2)} c/u
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        {/* Responsive controls */}
+                        <div className="flex flex-col sm:flex-row gap-2 mt-2 w-full items-stretch sm:items-center">
+                          <div className="flex items-center gap-3 w-full sm:w-auto">
                             <span className="text-sm text-gray-500">Cantidad:</span>
                             <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
                               <button
@@ -90,23 +108,12 @@ const Cart = () => {
                           </div>
                           <button
                             onClick={() => dispatch(removeFromCart(item))}
-                            className="flex items-center gap-2 text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors text-sm font-medium"
+                            className="flex items-center gap-2 text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors text-sm font-medium w-full sm:w-auto justify-center sm:justify-start"
                           >
                             <FiX className="text-lg" />
                             Eliminar
                           </button>
                         </div>
-                      </div>
-                      {/* Price */}
-                      <div className="text-right flex-shrink-0 min-w-[90px]">
-                        <div className="text-lg font-bold text-gray-800">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </div>
-                        {item.quantity > 1 && (
-                          <div className="text-sm text-gray-500">
-                            ${item.price.toFixed(2)} c/u
-                          </div>
-                        )}
                       </div>
                     </div>
                   ))}
@@ -124,12 +131,16 @@ const Cart = () => {
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Envío</span>
-                    <span className="font-semibold text-green-600">Gratis</span>
+                    {envioGratis ? (
+                      <span className="font-semibold text-green-600">Gratis</span>
+                    ) : (
+                      <span className="font-semibold text-gray-800">${costoEnvio.toFixed(2)}</span>
+                    )}
                   </div>
                   <div className="border-t border-gray-200 pt-3">
                     <div className="flex justify-between text-xl font-bold text-gray-800">
                       <span>Total</span>
-                      <span>${total.toFixed(2)}</span>
+                      <span>${(total + costoEnvio).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -150,9 +161,15 @@ const Cart = () => {
                   </button>
                 </div>
                 <div className="mt-2 p-4 bg-green-50 rounded-lg border border-green-200 text-center">
-                  <p className="text-sm text-green-700 font-medium">
-                    🚚 Envío gratis en compras superiores a $100
-                  </p>
+                  {envioGratis ? (
+                    <p className="text-sm text-green-700 font-medium">
+                      🚚 Envío gratis en compras superiores a $100
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-700 font-medium">
+                      El envío cuesta $10 para compras menores a $100
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

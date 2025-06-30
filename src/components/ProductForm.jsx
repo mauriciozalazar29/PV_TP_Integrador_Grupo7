@@ -31,6 +31,7 @@ const ProductForm = ({ onSubmit }) => {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [formError, setFormError] = useState("");
+  const [imagePreviewError, setImagePreviewError] = useState(false);
 
   useEffect(() => {
     if (formError && validateForm()) {
@@ -134,6 +135,30 @@ const ProductForm = ({ onSubmit }) => {
 
   const currentCategory = getCategoryData(form.category);
 
+  const handleImageError = () => {
+    setImagePreviewError(true);
+  };
+
+  const handleImageLoad = () => {
+    setImagePreviewError(false);
+  };
+
+  const handleReset = () => {
+    setForm({
+      title: '',
+      price: '',
+      description: '',
+      category: '',
+      image: '',
+      stock: '',
+      rating: '',
+    });
+    setErrors({});
+    setTouched({});
+    setFormError("");
+    setImagePreviewError(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Header Section */}
@@ -177,7 +202,7 @@ const ProductForm = ({ onSubmit }) => {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-8">
+          <form onSubmit={handleSubmit} className="p-8 animate-fade-in">
             {formError && (
               <div className="mb-4 p-3 rounded bg-red-100 text-red-800 text-center font-semibold border border-red-300 animate-pulse">
                 {formError}
@@ -190,7 +215,7 @@ const ProductForm = ({ onSubmit }) => {
                 <div className="space-y-2">
                   <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
                     <span className="text-base">🏷️</span>
-                    <span>Título del Producto *</span>
+                    <span>Título del Producto <span className="text-red-500">*</span></span>
                   </label>
                   <input
                     name="title"
@@ -198,14 +223,14 @@ const ProductForm = ({ onSubmit }) => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     placeholder="Ej. iPhone 15 Pro Max 256GB"
-                    className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
+                    className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 bg-white/80 shadow-sm hover:shadow-md ${
                       errors.title && touched.title
-                        ? 'border-red-400 focus:border-red-500'
+                        ? 'border-red-400 focus:border-red-500 bg-red-50'
                         : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                     }`}
                   />
                   {errors.title && touched.title && (
-                    <div className="flex items-center space-x-2 text-red-600 text-sm">
+                    <div className="flex items-center space-x-2 text-red-600 text-sm animate-shake">
                       <span>⚠️</span>
                       <span>{errors.title}</span>
                     </div>
@@ -216,7 +241,7 @@ const ProductForm = ({ onSubmit }) => {
                 <div className="space-y-2">
                   <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
                     <span className="text-base">📝</span>
-                    <span>Descripción del Producto *</span>
+                    <span>Descripción del Producto <span className="text-red-500">*</span></span>
                   </label>
                   <textarea
                     name="description"
@@ -225,14 +250,14 @@ const ProductForm = ({ onSubmit }) => {
                     onBlur={handleBlur}
                     placeholder="Describe las características principales, beneficios y especificaciones técnicas del producto..."
                     rows="6"
-                    className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 resize-none ${
+                    className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 resize-none bg-white/80 shadow-sm hover:shadow-md ${
                       errors.description && touched.description
-                        ? 'border-red-400 focus:border-red-500'
+                        ? 'border-red-400 focus:border-red-500 bg-red-50'
                         : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                     }`}
                   />
                   {errors.description && touched.description && (
-                    <div className="flex items-center space-x-2 text-red-600 text-sm">
+                    <div className="flex items-center space-x-2 text-red-600 text-sm animate-shake">
                       <span>⚠️</span>
                       <span>{errors.description}</span>
                     </div>
@@ -244,7 +269,7 @@ const ProductForm = ({ onSubmit }) => {
                   <div className="space-y-2">
                     <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
                       <span className="text-base text-green-600">💰</span>
-                      <span>Precio *</span>
+                      <span>Precio <span className="text-red-500">*</span></span>
                     </label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-green-600 font-bold text-lg">
@@ -258,15 +283,15 @@ const ProductForm = ({ onSubmit }) => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         placeholder="0.00"
-                        className={`w-full pl-8 pr-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
+                        className={`w-full pl-8 pr-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 bg-white/80 shadow-sm hover:shadow-md ${
                           errors.price && touched.price
-                            ? 'border-red-400 focus:border-red-500'
+                            ? 'border-red-400 focus:border-red-500 bg-red-50'
                             : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                         }`}
                       />
                     </div>
                     {errors.price && touched.price && (
-                      <div className="flex items-center space-x-2 text-red-600 text-sm">
+                      <div className="flex items-center space-x-2 text-red-600 text-sm animate-shake">
                         <span>⚠️</span>
                         <span>{errors.price}</span>
                       </div>
@@ -276,14 +301,14 @@ const ProductForm = ({ onSubmit }) => {
                   <div className="space-y-2">
                     <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
                       <span className="text-base text-purple-600">📂</span>
-                      <span>Categoría *</span>
+                      <span>Categoría <span className="text-red-500">*</span></span>
                     </label>
                     <select
                       name="category"
                       value={form.category}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className="w-full px-4 py-3.5 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 hover:border-gray-400 transition-all duration-200 bg-white"
+                      className="w-full px-4 py-3.5 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 hover:border-gray-400 transition-all duration-200 bg-white/80 shadow-sm hover:shadow-md"
                     >
                       {!form.category && (
                         <option value="" disabled>Selecciona una categoría...</option>
@@ -302,7 +327,7 @@ const ProductForm = ({ onSubmit }) => {
                   <div className="space-y-2">
                     <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
                       <span className="text-base text-orange-600">📦</span>
-                      <span>Stock Disponible *</span>
+                      <span>Stock Disponible <span className="text-red-500">*</span></span>
                     </label>
                     <input
                       name="stock"
@@ -312,14 +337,14 @@ const ProductForm = ({ onSubmit }) => {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       placeholder="Cantidad en inventario"
-                      className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
+                      className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 bg-white/80 shadow-sm hover:shadow-md ${
                         errors.stock && touched.stock
-                          ? 'border-red-400 focus:border-red-500'
+                          ? 'border-red-400 focus:border-red-500 bg-red-50'
                           : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                       }`}
                     />
                     {errors.stock && touched.stock && (
-                      <div className="flex items-center space-x-2 text-red-600 text-sm">
+                      <div className="flex items-center space-x-2 text-red-600 text-sm animate-shake">
                         <span>⚠️</span>
                         <span>{errors.stock}</span>
                       </div>
@@ -341,14 +366,14 @@ const ProductForm = ({ onSubmit }) => {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       placeholder="4.5"
-                      className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
+                      className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 bg-white/80 shadow-sm hover:shadow-md ${
                         errors.rating && touched.rating
-                          ? 'border-red-400 focus:border-red-500'
+                          ? 'border-red-400 focus:border-red-500 bg-red-50'
                           : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                       }`}
                     />
                     {errors.rating && touched.rating && (
-                      <div className="flex items-center space-x-2 text-red-600 text-sm">
+                      <div className="flex items-center space-x-2 text-red-600 text-sm animate-shake">
                         <span>⚠️</span>
                         <span>{errors.rating}</span>
                       </div>
@@ -363,31 +388,48 @@ const ProductForm = ({ onSubmit }) => {
                   <div className="space-y-4">
                     <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
                       <span className="text-base text-blue-600">🖼️</span>
-                      <span>Imagen del Producto *</span>
+                      <span>Imagen del Producto <span className="text-red-500">*</span></span>
                     </label>
-                    
                     <input
                       name="image"
                       value={form.image}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       placeholder="https://ejemplo.com/imagen.jpg"
-                      className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 ${
+                      className={`w-full px-4 py-3.5 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-50 bg-white/80 shadow-sm hover:shadow-md ${
                         errors.image && touched.image
-                          ? 'border-red-400 focus:border-red-500'
+                          ? 'border-red-400 focus:border-red-500 bg-red-50'
                           : 'border-gray-300 focus:border-blue-500 hover:border-gray-400'
                       }`}
                     />
                     {errors.image && touched.image && (
-                      <div className="flex items-center space-x-2 text-red-600 text-sm">
+                      <div className="flex items-center space-x-2 text-red-600 text-sm animate-shake">
                         <span>⚠️</span>
                         <span>{errors.image}</span>
                       </div>
                     )}
+                    {/* Vista previa de imagen */}
+                    <div className="mt-4 flex flex-col items-center">
+                      {form.image && !imagePreviewError ? (
+                        <img
+                          src={form.image}
+                          alt="Vista previa"
+                          className="w-40 h-40 object-contain rounded-lg border border-gray-200 shadow-md transition-transform duration-300 hover:scale-105 bg-white"
+                          onError={handleImageError}
+                          onLoad={handleImageLoad}
+                        />
+                      ) : form.image && imagePreviewError ? (
+                        <div className="w-40 h-40 flex items-center justify-center bg-red-50 border border-red-300 rounded-lg text-red-500 text-sm">
+                          Imagen no válida
+                        </div>
+                      ) : (
+                        <div className="w-40 h-40 flex items-center justify-center bg-gray-100 border border-gray-200 rounded-lg text-gray-400 text-sm">
+                          Vista previa
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-
-               
 
                 {/* Estadísticas del Formulario */}
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
@@ -414,12 +456,12 @@ const ProductForm = ({ onSubmit }) => {
             </div>
 
             {/* Botones de Acción */}
-           <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-gray-200">
               <button
                 type="button"
                 onClick={() => navigate('/')}
                 title="Cancelar"
-                className="flex-1 group relative p-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 flex items-center justify-center overflow-hidden"
+                className="flex-1 group relative p-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 flex items-center justify-center overflow-hidden shadow-sm hover:shadow-md"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-gray-50 to-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <FiArrowLeft className="text-xl group-hover:scale-110 group-hover:-translate-x-1 transition-transform duration-300 relative z-10" />
@@ -430,7 +472,7 @@ const ProductForm = ({ onSubmit }) => {
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
                 </div>
               </button>
-              
+
               <button
                 type="submit"
                 title="Guardar"
