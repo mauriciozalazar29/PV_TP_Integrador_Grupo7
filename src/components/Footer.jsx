@@ -3,8 +3,8 @@ import { IoMdSend } from 'react-icons/io';
 
 const Footer = () => {
   return (
-     <footer className="bg-gradient-to-b from-blue-50 to-blue-100 text-gray-800 border-t border-blue-200">
-      <div className="max-w-7xl mx-auto px-6 py-12">
+     <footer className="bg-gradient-to-b from-blue-50 to-blue-100 text-gray-800 border-t border-blue-200 w-full overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 py-8 sm:py-12 w-full">
         <div className="text-center mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">SUSCRIBITE A NUESTRO NEWSLETTER</h2>
           <p className="text-gray-600 mb-6">Recibí nuestras ofertas y novedades</p>
@@ -21,7 +21,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12 w-full">
           {/* Acerca De */}
           <div>
             <h3 className="font-bold text-lg mb-4 text-gray-800 border-b border-gray-300 pb-2">ACERCA DE</h3>
@@ -61,9 +61,8 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="flex flex-col md:flex-row justify-between items-center border-t border-gray-200 pt-8">
-        
-          <div className="mb-4 md:mb-0">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-t border-gray-200 pt-6 sm:pt-8 gap-4 sm:gap-6 md:gap-0 w-full">
+          <div className="w-full md:w-auto mb-4 md:mb-0 flex flex-col items-start">
             <h4 className="font-semibold text-gray-800 mb-3">SEGUINOS</h4>
             <div className="flex space-x-4">
               <a href="#" className="bg-white p-2 rounded-full border border-gray-200 hover:bg-blue-50 transition">
@@ -78,7 +77,7 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="w-full md:w-auto flex flex-wrap justify-start md:justify-center gap-2 sm:gap-4">
             <FaCcVisa className="text-3xl text-gray-700" />
             <FaCcMastercard className="text-3xl text-gray-700" />
             <FaCcPaypal className="text-3xl text-gray-700" />
@@ -86,7 +85,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="text-center text-gray-500 text-sm mt-8">
+        <div className="text-center text-gray-500 text-xs sm:text-sm mt-6 sm:mt-8 w-full">
           <p>© {new Date().getFullYear()} TIENDAMIA - Todos los derechos reservados</p>
         </div>
       </div>

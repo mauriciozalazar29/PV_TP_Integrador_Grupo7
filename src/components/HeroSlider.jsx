@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import promo1 from '../assets/promo1.webp';
 import promo2 from '../assets/promo2.webp';
 import promo3 from '../assets/promo3.webp';
+import promo5 from '../assets/promo5.webp';
 import promoFija from '../assets/promo4.webp';
 
-const images = [promo1, promo2, promo3];
+const images = [promo1, promo2, promo3, promo5];
 
 const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
@@ -21,14 +22,11 @@ const HeroSlider = () => {
   const prev = () => setCurrent(prev => (prev - 1 + images.length) % images.length);
 
   return (
-    <div className="w-full mx-auto mb-4 max-w-screen-2xl px-2 sm:px-4">
-
+    <div className="w-full mx-auto mb-4 max-w-full px-1 xs:px-2 sm:px-4">
+      {/* Slider */}
       <div className="relative overflow-hidden rounded-xl shadow-2xl group 
-                      w-full
-                      h-40 xs:h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 2xl:h-96
-                      min-h-[160px] max-h-[400px] bg-gray-100">
-        
-        <div className="relative w-full h-full">
+                      w-full aspect-[16/8] sm:aspect-[16/9] md:aspect-[16/8] lg:aspect-[16/7] max-h-[600px] bg-gray-100">
+        <div className="relative w-full h-full overflow-hidden">
           {images.map((image, index) => (
             <div
               key={index}
@@ -41,16 +39,14 @@ const HeroSlider = () => {
               <img
                 src={image}
                 alt={`Promoción ${index + 1}`}
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-contain object-center"
                 loading={index === 0 ? "eager" : "lazy"}
-                style={{ objectPosition: 'center center' }}
               />
             </div>
           ))}
-   
-          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent z-20"></div>
         </div>
 
+        {/* Botón anterior */}
         <button
           onClick={prev}
           className="absolute top-1/2 left-1 sm:left-2 transform -translate-y-1/2 
@@ -67,7 +63,8 @@ const HeroSlider = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        
+
+        {/* Botón siguiente */}
         <button
           onClick={next}
           className="absolute top-1/2 right-1 sm:right-2 transform -translate-y-1/2 
@@ -85,6 +82,7 @@ const HeroSlider = () => {
           </svg>
         </button>
 
+        {/* Indicadores */}
         <div className="absolute bottom-3 sm:bottom-4 left-1/2 transform -translate-x-1/2 
                         flex gap-1.5 sm:gap-2 bg-black/20 backdrop-blur-md rounded-full px-2 py-1.5 z-30">
           {images.map((_, index) => (
@@ -103,14 +101,14 @@ const HeroSlider = () => {
         </div>
       </div>
 
-      <div className="mt-3 sm:mt-4 overflow-hidden rounded-lg sm:rounded-xl shadow-lg
-                      h-14 sm:h-16 md:h-20 lg:h-24 xl:h-28
-                      min-h-[56px] max-h-[120px] bg-gray-50
-                      hover:shadow-xl transition-shadow duration-300">
+      {/* Promoción fija */}
+      <div className="mt-3 sm:mt-6 overflow-hidden rounded-xl shadow-xl
+                      h-[60px] sm:h-[80px] md:h-[100px] lg:h-[120px] xl:h-[140px]
+                      bg-white w-full">
         <img
           src={promoFija}
           alt="Promoción Mercado Pago - 3 y 6 cuotas sin interés"
-          className="w-full h-full object-cover object-center 
+          className="w-full h-full object-contain object-center
                      hover:scale-[1.02] transition-transform duration-300"
           loading="lazy"
         />
