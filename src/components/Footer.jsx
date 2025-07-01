@@ -1,3 +1,6 @@
+// Footer.jsx
+// Pie de página con información, enlaces y formulario de newsletter.
+// Botón: enviar email (newsletter).
 import { FaFacebookF, FaInstagram, FaXTwitter, FaCcVisa, FaCcMastercard, FaCcPaypal } from 'react-icons/fa6';
 import { IoMdSend } from 'react-icons/io';
 

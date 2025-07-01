@@ -1,42 +1,48 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { toggleFavorite } from '../features/favorites/favoritesSlice';
-import { addToCart } from '../features/cart/cartSlice';
-import { useState, useMemo, useEffect } from 'react';
-import { fetchProducts } from '../features/products/productsSlice';
-import { toast } from 'react-toastify';
+// ProductDetail.jsx
+// Vista de detalle de producto. Muestra info, permite elegir talle/cantidad, agregar a favoritos y al carrito.
+// Botones: agregar a favoritos, agregar al carrito, tabs de descripción/características, seleccionar talle/cantidad.
+// Si no hay producto, muestra error. Si no hay productos cargados, los pide al backend.
+import { useParams, useNavigate } from 'react-router-dom'; // Importa hooks para obtener parámetros de la URL y navegar
+import { useSelector, useDispatch } from 'react-redux'; // Importa hooks de Redux para acceder al estado y despachar acciones
+import { toggleFavorite } from '../features/favorites/favoritesSlice'; // Importa la acción para alternar favoritos
+import { addToCart } from '../features/cart/cartSlice'; // Importa la acción para agregar al carrito
+import { useState, useMemo, useEffect } from 'react'; // Importa hooks de React
+import { fetchProducts } from '../features/products/productsSlice'; // Importa la acción para obtener productos
+import { toast } from 'react-toastify'; // Importa la librería para mostrar notificaciones
 
 const ProductDetail = () => {
-  const { id } = useParams();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [errorTalle, setErrorTalle] = useState('');
+  const { id } = useParams(); // Obtiene el ID del producto desde la URL
+  const dispatch = useDispatch(); // Inicializa la función dispatch
+  const navigate = useNavigate(); // Inicializa la función de navegación
+  const [errorTalle, setErrorTalle] = useState(''); // Estado para manejar errores de selección de talle
 
-  // Nuevo: obtener loading y error
+  // Obtiene productos, estado de carga y errores desde el estado de Redux
   const { items, loading, error } = useSelector(state => state.products);
-  const product = items.find(item => item.id === parseInt(id));
+  const product = items.find(item => item.id === parseInt(id)); // Busca el producto por ID
 
-  const favorites = useSelector(state => state.favorites);
-  const isFav = favorites.includes(parseInt(id));
+  const favorites = useSelector(state => state.favorites); // Obtiene la lista de favoritos
+  const isFav = favorites.includes(parseInt(id)); // Verifica si el producto es favorito
 
-  const [tab, setTab] = useState('descripcion');
-  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [talleSeleccionado, setTalleSeleccionado] = useState(null);
-  const [cantidad, setCantidad] = useState(1);
+  const [tab, setTab] = useState('descripcion'); // Estado para manejar la pestaña activa
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 }); // Estado para la posición del zoom
+  const [isZoomed, setIsZoomed] = useState(false); // Estado para manejar el zoom de la imagen
+  const [talleSeleccionado, setTalleSeleccionado] = useState(null); // Estado para el talle seleccionado
+  const [cantidad, setCantidad] = useState(1); // Estado para la cantidad del producto
 
-  // Nuevo: cargar productos si no hay
+  // Carga productos si no hay productos en el estado
   useEffect(() => {
     if (!items || items.length === 0) {
       dispatch(fetchProducts());
     }
   }, [dispatch, items]);
 
+  // Obtiene información del producto
   const categoria = product?.category?.toLowerCase() || '';
   const titulo = product?.title?.toLowerCase() || '';
-  const rating = product?.rating?.rate ?? 4.2;
-  const reviewCount = product?.rating?.count ?? Math.floor(Math.random() * 500) + 50;
+  const rating = product?.rating?.rate ?? 4.2; // Valor por defecto para la calificación
+  const reviewCount = product?.rating?.count ?? Math.floor(Math.random() * 500) + 50; // Valor por defecto para el conteo de reseñas
 
+  // Determina si se deben mostrar talles
   const mostrarTalles = useMemo(() => (
     categoria.includes("clothing") &&
     (
@@ -48,23 +54,28 @@ const ProductDetail = () => {
     )
   ), [categoria, titulo]);
 
+  // Determina si se debe mostrar la guía de talles
   const mostrarGuiaDeTalles = mostrarTalles && categoria !== 'jewelery';
 
+  // Detalles personalizados por ID
   const detallesPorId = {
     1: ['Material: Algodón 100%', 'Lavado: Lavar a mano', 'Origen: Argentina'],
     2: ['Material: Algodón 100%', 'Lavado: Lavar a mano', 'Origen: Brasil'],
     // ... otros detalles
   };
 
+  // Función para obtener detalles del producto
   const obtenerDetalles = () => {
     return detallesPorId[product?.id] || ['No hay detalles personalizados para este producto.'];
   };
 
+  // Función para calcular el precio original ficticio
   const calcularPrecioOriginal = (precio) => {
     const aumentoFicticio = 1.176; // Para que con 15% descuento quede el precio original
     return (precio * aumentoFicticio).toFixed(2);
   };
 
+  // Función para calcular las cuotas
   const calcularCuotas = (precio) => {
     const precioTotal = precio * cantidad;
     return {
@@ -74,26 +85,27 @@ const ProductDetail = () => {
     };
   };
 
+  // Función para agregar el producto al carrito
   const agregarAlCarrito = () => {
     if (mostrarTalles && !talleSeleccionado) {
-      setErrorTalle('Seleccioná un talle antes de continuar.');
+      setErrorTalle('Seleccioná un talle antes de continuar.'); // Muestra un error si no se seleccionó un talle
       return;
     }
-    setErrorTalle('');
+    setErrorTalle(''); // Resetea el error
     const item = {
       id: product.id,
       title: product.title,
       price: product.price,
       image: product.image,
-      size: mostrarTalles ? talleSeleccionado : null,
-      quantity: cantidad,
+      size: mostrarTalles ? talleSeleccionado : null, // Agrega el talle si corresponde
+      quantity: cantidad, // Agrega la cantidad
     };
-    dispatch(addToCart(item));
-    toast.success('Producto agregado al carrito');
-    navigate('/cart');
+    dispatch(addToCart(item)); // Despacha la acción para agregar al carrito
+    toast.success('Producto agregado al carrito'); // Muestra una notificación de éxito
+    navigate('/cart'); // Redirige al carrito
   };
 
-
+  // Manejo de estados de carga y error
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
       <p className="text-xl text-gray-600">Cargando producto...</p>
@@ -112,9 +124,9 @@ const ProductDetail = () => {
     </div>
   );
 
-  const precioOriginalFicticio = calcularPrecioOriginal(product.price);
-  const cuotas = calcularCuotas(product.price);
-
+  const precioOriginalFicticio = calcularPrecioOriginal(product.price); // Calcula el precio original ficticio
+  const cuotas = calcularCuotas(product.price); // Calcula las cuotas
+  
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4">

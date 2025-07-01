@@ -1,16 +1,20 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { removeFromCart, clearCart, decrementQuantity, incrementQuantity } from '../features/cart/cartSlice';
-import { useNavigate } from 'react-router-dom';
-import { FiShoppingCart, FiTrash2, FiMinus, FiPlus, FiX, FiCreditCard, FiShoppingBag } from 'react-icons/fi';
+// Cart.jsx
+// Componente que muestra el carrito de compras con funcionalidades completas
+
+import { useDispatch, useSelector } from 'react-redux'; // Importa hooks de Redux para acceder al estado y despachar acciones
+import { removeFromCart, clearCart, decrementQuantity, incrementQuantity } from '../features/cart/cartSlice'; // Importa acciones del slice del carrito
+import { useNavigate } from 'react-router-dom'; // Importa el hook para la navegación
+import { FiShoppingCart, FiTrash2, FiMinus, FiPlus, FiX, FiCreditCard, FiShoppingBag } from 'react-icons/fi'; // Importa iconos de react-icons
 
 const Cart = () => {
-  const cart = useSelector(state => state.cart);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const cart = useSelector(state => state.cart); // Obtiene el estado del carrito desde Redux
+  const dispatch = useDispatch(); // Inicializa el dispatch para enviar acciones
+  const navigate = useNavigate(); // Inicializa la función de navegación
 
+  // Calcula el total del carrito
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const envioGratis = total >= 100;
-  const costoEnvio = envioGratis ? 0 : 10;
+  const envioGratis = total >= 100; // Determina si el envío es gratis
+  const costoEnvio = envioGratis ? 0 : 10; // Establece el costo de envío
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-10">
@@ -27,6 +31,7 @@ const Cart = () => {
         </div>
 
         {cart.length === 0 ? (
+          // Mensaje cuando el carrito está vacío
           <div className="bg-white rounded-2xl shadow-lg p-14 text-center flex flex-col items-center gap-4">
             <FiShoppingBag className="text-7xl text-gray-300 mx-auto mb-2" />
             <h2 className="text-2xl font-semibold text-gray-600 mb-1">Tu carrito está vacío</h2>
@@ -39,8 +44,8 @@ const Cart = () => {
             </button>
           </div>
         ) : (
+          // Renderiza los productos en el carrito
           <div className="grid lg:grid-cols-3 gap-10">
-
             <div className="lg:col-span-2">
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                 <div className="p-6 border-b border-gray-100 bg-blue-50">
@@ -49,7 +54,6 @@ const Cart = () => {
                 <div className="divide-y divide-gray-100">
                   {cart.map((item, i) => (
                     <div key={i} className="p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-4 items-stretch">
-
                       <div className="flex-shrink-0 self-center sm:self-auto">
                         <img 
                           src={item.image} 
@@ -180,4 +184,4 @@ const Cart = () => {
   );
 };
 
-export default Cart;
+export default Cart; // Exporta el componente Cart para su uso en otras partes de la aplicación

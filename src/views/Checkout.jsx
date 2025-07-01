@@ -1,18 +1,23 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { clearCart } from '../features/cart/cartSlice';
-import { useNavigate } from 'react-router-dom';
-import { FaMapMarkerAlt, FaUser, FaCity, FaEnvelope,FaCreditCard, FaPaypal, FaIdCard} from 'react-icons/fa';
-import { SiMercadopago } from 'react-icons/si';
-import { GiOrange } from 'react-icons/gi';
-import { BsPhone, BsCheckCircleFill } from 'react-icons/bs';
-import { MdPayment } from 'react-icons/md';
-import { Bs123 } from 'react-icons/bs';
+import { useState } from 'react'; // Importa useState para manejar el estado local
+import { useDispatch } from 'react-redux'; // Importa useDispatch para despachar acciones de Redux
+import { clearCart } from '../features/cart/cartSlice'; // Importa la acción para limpiar el carrito
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate para la navegación
+import { FaMapMarkerAlt, FaUser , FaCity, FaEnvelope, FaCreditCard, FaPaypal, FaIdCard } from 'react-icons/fa'; // Importa iconos de Font Awesome
+import { SiMercadopago } from 'react-icons/si'; // Importa el icono de Mercado Pago
+import { GiOrange } from 'react-icons/gi'; // Importa el icono de Tarjeta Naranja
+import { BsPhone, BsCheckCircleFill } from 'react-icons/bs'; // Importa iconos de Bootstrap
+import { MdPayment } from 'react-icons/md'; // Importa el icono de pago
+
+// Checkout.jsx
+// Componente que muestra el formulario de pago. Recoge datos del usuario y método de pago.
+// Al enviar el formulario, limpia el carrito y navega a la página de éxito.
+// Botón principal: "Confirmar Compra".
 
 const Checkout = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const dispatch = useDispatch(); // Inicializa el dispatch para enviar acciones
+  const navigate = useNavigate(); // Inicializa la función de navegación
 
+  // Estado para manejar el formulario y sus errores
   const [form, setForm] = useState({
     nombre: '',
     apellido: '',
@@ -23,12 +28,13 @@ const Checkout = () => {
     ciudad: '',
     metodoPago: 'tarjeta',
   });
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
-  const [success, setSuccess] = useState(false);
+  const [errors, setErrors] = useState({}); // Estado para manejar errores de validación
+  const [touched, setTouched] = useState({}); // Estado para manejar campos tocados
+  const [success, setSuccess] = useState(false); // Estado para manejar el éxito del pago
 
+  // Función para validar los campos del formulario
   const validate = (fieldValues = form) => {
-    let temp = { ...errors };
+    let temp = { ...errors }; // Copia el estado de errores
     if ('nombre' in fieldValues)
       temp.nombre = /^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,30}$/.test(fieldValues.nombre)
         ? ''
@@ -53,36 +59,41 @@ const Checkout = () => {
         : 'Código postal inválido (solo números, 4-8 dígitos)';
     if ('ciudad' in fieldValues)
       temp.ciudad = fieldValues.ciudad ? '' : 'La ciudad es requerida';
-    setErrors({ ...temp });
-    return Object.values(temp).every(x => x === '');
+    setErrors({ ...temp }); // Actualiza el estado de errores
+    return Object.values(temp).every(x => x === ''); // Retorna true si no hay errores
   };
 
+  // Maneja el cambio en los campos del formulario
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-    validate({ ...form, [name]: value });
+    const { name, value } = e.target; // Desestructura el nombre y valor del campo
+    setForm(prev => ({ ...prev, [name]: value })); // Actualiza el estado del formulario
+    validate({ ...form, [name]: value }); // Valida el campo
   };
 
+  // Maneja el evento de perder el foco en los campos del formulario
   const handleBlur = (e) => {
-    const { name } = e.target;
-    setTouched(prev => ({ ...prev, [name]: true }));
-    validate(form);
+    const { name } = e.target; // Obtiene el nombre del campo
+    setTouched(prev => ({ ...prev, [name]: true })); // Marca el campo como tocado
+    validate(form); // Valida el formulario
   };
 
+  // Maneja el envío del formulario
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) {
-      setSuccess(true);
+    e.preventDefault(); // Previene el comportamiento por defecto del formulario
+    if (validate()) { // Si el formulario es válido
+      setSuccess(true); // Marca el éxito
       setTimeout(() => {
-        dispatch(clearCart());
-        navigate('/success');
+        dispatch(clearCart()); // Limpia el carrito
+        navigate('/success'); // Redirige a la página de éxito
       }, 1200);
     } else {
+      // Marca todos los campos como tocados si hay errores
       setTouched({ nombre: true, apellido: true, dni: true, correo: true, direccion: true, cp: true, ciudad: true });
-      setSuccess(false);
+      setSuccess(false); // Marca el éxito como falso
     }
   };
 
+  // Componente para mostrar las opciones de método de pago
   const PaymentMethodCard = ({ method, selected, onClick }) => {
     const methodData = {
       tarjeta: {
@@ -117,7 +128,7 @@ const Checkout = () => {
       }
     };
 
-    const currentMethod = methodData[method] || {};
+    const currentMethod = methodData[method] || {}; // Obtiene los datos del método de pago actual
     
     return (
       <div 
@@ -125,7 +136,7 @@ const Checkout = () => {
           ${selected ? `border-${currentMethod.color}-500 ring-2 ring-${currentMethod.color}-200 bg-${currentMethod.color}-50` : 'border-gray-200 hover:border-gray-300'}
           flex items-start gap-3
         `}
-        onClick={onClick}
+        onClick={onClick} // Maneja el clic en el método de pago
       >
         {selected && (
           <div className={`absolute -top-2 -right-2 bg-${currentMethod.color}-500 text-white rounded-full p-1`}>
@@ -133,7 +144,7 @@ const Checkout = () => {
           </div>
         )}
         <div className={`p-2 rounded-lg bg-${currentMethod.color}-100 text-${currentMethod.color}-600`}>
-          {currentMethod.icon}
+          {currentMethod.icon} {/* Muestra el icono del método de pago */}
         </div>
         <div>
           <h4 className="font-medium text-gray-800">{currentMethod.title}</h4>
@@ -167,7 +178,7 @@ const Checkout = () => {
               <div className="space-y-6">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                    <FaUser size={14} />
+                    <FaUser  size={14} />
                   </div>
                   <h2 className="text-xl font-semibold text-gray-800">
                     Información Personal
@@ -178,7 +189,7 @@ const Checkout = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
                     <div className={`relative flex items-center border rounded-lg px-3 py-2 ${errors.nombre && touched.nombre ? 'border-red-400 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}>
-                      <FaUser className="text-gray-400 mr-2" />
+                      <FaUser  className="text-gray-400 mr-2" />
                       <input 
                         type="text" 
                         name="nombre" 
@@ -195,7 +206,7 @@ const Checkout = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Apellido</label>
                     <div className={`relative flex items-center border rounded-lg px-3 py-2 ${errors.apellido && touched.apellido ? 'border-red-400 bg-red-50' : 'border-gray-300 hover:border-gray-400'}`}>
-                      <FaUser className="text-gray-400 mr-2" />
+                      <FaUser  className="text-gray-400 mr-2" />
                       <input 
                         type="text" 
                         name="apellido" 
@@ -351,4 +362,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default Checkout; // Exporta el componente Checkout para su uso en otras partes de la aplicación

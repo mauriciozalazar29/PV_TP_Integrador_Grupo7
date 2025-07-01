@@ -1,38 +1,42 @@
-import { useState, useMemo, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { addToCart } from '../features/cart/cartSlice';
-import ProductCard from '../components/ProductCard';
-import { fetchProducts } from '../features/products/productsSlice';
-import { FiHeart } from 'react-icons/fi';
+// Favorites.jsx
+// Componente que muestra la vista de productos favoritos. Permite filtrar por categoría y agregar todos los favoritos al carrito.
+// Botones: filtro de categoría, agregar todos al carrito, y los de cada ProductCard.
+
+import { useState, useMemo, useEffect } from 'react'; // Importa hooks de React
+import { useSelector, useDispatch } from 'react-redux'; // Importa hooks de Redux para acceder al estado y despachar acciones
+import { useNavigate } from 'react-router-dom'; // Importa el hook para la navegación
+import { addToCart } from '../features/cart/cartSlice'; // Importa la acción para agregar productos al carrito
+import ProductCard from '../components/ProductCard'; // Importa el componente para mostrar productos
+import { fetchProducts } from '../features/products/productsSlice'; // Importa la acción para obtener productos
+import { FiHeart } from 'react-icons/fi'; // Importa el icono de corazón
 
 const Favorites = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const favorites = useSelector(state => state.favorites);
-  const products = useSelector(state => state.products.items);
-  const loading = useSelector(state => state.products.loading);
-  
-  // Estados para filtros
+  const navigate = useNavigate(); // Inicializa la función de navegación
+  const dispatch = useDispatch(); // Inicializa la función dispatch
+  const favorites = useSelector(state => state.favorites); // Obtiene los productos favoritos desde el estado de Redux
+  const products = useSelector(state => state.products.items); // Obtiene la lista de productos desde el estado de Redux
+  const loading = useSelector(state => state.products.loading); // Obtiene el estado de carga de productos
+
+  // Estado para el filtro de categorías
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
-  // Obtener productos favoritos
+  // Obtener productos favoritos usando useMemo para optimizar el rendimiento
   const favProducts = useMemo(() => products.filter(p => favorites.includes(p.id)), [products, favorites]);
 
-  // Obtener categorías únicas de los favoritos
+  // Obtener categorías únicas de los productos favoritos
   const getUniqueCategories = useMemo(() => {
     const categories = [...new Set(favProducts.map(p => p.category))];
-    return ['Todos', ...categories];
+    return ['Todos', ...categories]; // Agrega 'Todos' a la lista de categorías
   }, [favProducts]);
 
-  // Filtrar productos por categoría
+  // Filtrar productos favoritos por categoría seleccionada
   const filteredProducts = useMemo(() => {
     return selectedCategory === 'Todos' 
       ? favProducts 
       : favProducts.filter(p => p.category === selectedCategory);
   }, [favProducts, selectedCategory]);
 
-  // Agregar todos los productos al carrito
+  // Agregar todos los productos filtrados al carrito
   const handleAddAllToCart = () => {
     filteredProducts.forEach(product => {
       dispatch(addToCart({
@@ -43,15 +47,17 @@ const Favorites = () => {
         size: 'default'
       }));
     });
-    navigate('/cart');
+    navigate('/cart'); // Redirige a la página del carrito
   };
 
+  // Efecto para cargar productos si la lista está vacía
   useEffect(() => {
     if (products.length === 0) {
-      dispatch(fetchProducts());
+      dispatch(fetchProducts()); // Despacha la acción para obtener productos
     }
   }, [dispatch, products.length]);
 
+  // Componente para mostrar el estado vacío
   const EmptyState = () => (
     <div className="bg-white rounded-xl shadow-sm p-12 text-center">
       <div className="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mb-6 mx-auto">
@@ -71,6 +77,7 @@ const Favorites = () => {
     </div>
   );
 
+  // Componente para el encabezado de favoritos
   const FavoritesHeader = () => (
     <div className="flex items-center gap-3 mb-8">
       <FiHeart className="text-4xl text-blue-600" />
@@ -83,12 +90,13 @@ const Favorites = () => {
     </div>
   );
 
+  // Componente para los filtros de categorías
   const CategoryFilters = () => (
     <div className="mb-6 flex flex-wrap gap-2">
       {getUniqueCategories.map(category => (
         <button
           key={category}
-          onClick={() => setSelectedCategory(category)}
+          onClick={() => setSelectedCategory(category)} // Cambia la categoría seleccionada
           className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
             selectedCategory === category
               ? 'bg-blue-100 text-blue-800'
@@ -101,13 +109,14 @@ const Favorites = () => {
     </div>
   );
 
+  // Componente para mostrar la cuadrícula de productos
   const ProductsGrid = () => (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       {filteredProducts.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
           {filteredProducts.map(product => (
             <div key={product.id} className="group">
-              <ProductCard product={product} />
+              <ProductCard product={product} /> {/* Renderiza el componente ProductCard para cada producto */}
             </div>
           ))}
         </div>
@@ -117,7 +126,7 @@ const Favorites = () => {
             No hay productos en la categoría "{selectedCategory}"
           </p>
           <button
-            onClick={() => setSelectedCategory('Todos')}
+            onClick={() => setSelectedCategory('Todos')} // Restablece la categoría seleccionada
             className="text-blue-600 hover:text-blue-700 font-medium"
           >
             Ver todos los favoritos
@@ -127,18 +136,19 @@ const Favorites = () => {
     </div>
   );
 
+  // Componente para mostrar productos recomendados
   const RecommendedSection = () => {
-    if (favProducts.length === 0) return null;
+    if (favProducts.length === 0) return null; // No muestra la sección si no hay productos favoritos
     
-    const favoriteCategories = [...new Set(favProducts.map(p => p.category))];
+    const favoriteCategories = [...new Set(favProducts.map(p => p.category))]; // Obtiene categorías de productos favoritos
     const similarProducts = products
       .filter(p => 
         favoriteCategories.includes(p.category) && 
-        !favorites.includes(p.id)
+        !favorites.includes(p.id) // Filtra productos que no están en favoritos
       )
-      .slice(0, 4);
+      .slice(0, 4); // Limita a 4 productos recomendados
 
-    if (similarProducts.length === 0) return null;
+    if (similarProducts.length === 0) return null; // No muestra la sección si no hay productos similares
 
     return (
       <div className="mt-8">
@@ -153,7 +163,7 @@ const Favorites = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {similarProducts.map(product => (
               <div key={product.id} className="group">
-                <ProductCard product={product} />
+                <ProductCard product={product} /> {/* Renderiza el componente ProductCard para productos recomendados */}
               </div>
             ))}
           </div>
@@ -171,14 +181,14 @@ const Favorites = () => {
             <p className="text-gray-500 text-lg">Cargando productos...</p>
           </div>
         ) : favProducts.length === 0 ? (
-          <EmptyState />
+          <EmptyState /> // Muestra el estado vacío si no hay productos favoritos
         ) : (
           <>
-            <CategoryFilters />
+            <CategoryFilters /> // Muestra los filtros de categorías
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-              <ProductsGrid />
+              <ProductsGrid /> // Muestra la cuadrícula de productos favoritos
             </div>
-            <RecommendedSection />
+            <RecommendedSection /> // Muestra productos recomendados
           </>
         )}
       </div>
@@ -186,4 +196,4 @@ const Favorites = () => {
   );
 };
 
-export default Favorites;
+export default Favorites; // Exporta el componente Favorites

@@ -1,46 +1,56 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { loginFailure, loginSuccess } from '../features/auth/authSlice';
-import { useNavigate } from 'react-router-dom';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { toast } from 'react-toastify';
+// Login.jsx
+// Componente de vista de inicio de sesión. Permite al usuario ingresar su correo electrónico y contraseña.
+// Botones: mostrar/ocultar contraseña, enviar formulario (iniciar sesión).
+// Si el inicio de sesión es exitoso, navega al home. Si falla, muestra un mensaje de error.
+
+import { useState } from 'react'; // Importa useState para manejar el estado local
+import { useDispatch, useSelector } from 'react-redux'; // Importa hooks de Redux para despachar acciones y seleccionar estado
+import { loginFailure, loginSuccess } from '../features/auth/authSlice'; // Importa acciones para manejar el estado de autenticación
+import { useNavigate } from 'react-router-dom'; // Importa el hook para la navegación
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Importa iconos para mostrar/ocultar la contraseña
+import { toast } from 'react-toastify'; // Importa la librería para mostrar notificaciones
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const authError = useSelector(state => state.auth.error);
-  const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch(); // Inicializa la función dispatch
+  const navigate = useNavigate(); // Inicializa la función de navegación
+  const authError = useSelector(state => state.auth.error); // Obtiene el error de autenticación desde el estado de Redux
+  const [showPassword, setShowPassword] = useState(false); // Estado para mostrar/ocultar la contraseña
+  const [isSubmitting, setIsSubmitting] = useState(false); // Estado para manejar el estado de envío del formulario
 
+  // Estado para manejar el formulario de inicio de sesión
   const [form, setForm] = useState({
     email: '',
     password: ''
   });
 
+  // Maneja el cambio en los campos del formulario
   const handleChange = (e) => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value })); // Actualiza el estado del formulario
   };
 
+  // Maneja el envío del formulario
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
+    e.preventDefault(); // Previene el comportamiento por defecto del formulario
+    setIsSubmitting(true); // Marca el inicio del envío
+
     // Simular una pequeña demora para mejor UX
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+    await new Promise(resolve => setTimeout(resolve, 500)); // Simula un retraso de 500 ms
+
+    // Obtiene los usuarios almacenados en localStorage
     const users = JSON.parse(localStorage.getItem('users') || '[]');
+    // Busca el usuario que coincida con el correo y la contraseña ingresados
     const user = users.find(u => u.email === form.email && u.password === form.password);
 
     if (user) {
-      dispatch(loginSuccess({ email: user.email }));
-      toast.success('¡Inicio de sesión exitoso!');
-      navigate('/');
+      dispatch(loginSuccess({ email: user.email })); // Despacha la acción de inicio de sesión exitoso
+      toast.success('¡Inicio de sesión exitoso!'); // Muestra una notificación de éxito
+      navigate('/'); // Redirige a la página principal
     } else {
-      dispatch(loginFailure('Credenciales inválidas'));
-      toast.error('Credenciales inválidas');
+      dispatch(loginFailure('Credenciales inválidas')); // Despacha la acción de fallo en el inicio de sesión
+      toast.error('Credenciales inválidas'); // Muestra una notificación de error
     }
     
-    setIsSubmitting(false);
+    setIsSubmitting(false); // Marca el fin del envío
   };
 
   return (
@@ -68,7 +78,7 @@ const Login = () => {
                 autoComplete="email"
                 required
                 value={form.email}
-                onChange={handleChange}
+                onChange={handleChange} // Maneja el cambio en el campo de correo
                 className="appearance-none relative block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700"
                 placeholder="tucorreo@ejemplo.com"
               />
@@ -82,18 +92,18 @@ const Login = () => {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? "text" : "password"} // Cambia el tipo de input según el estado de showPassword
                   autoComplete="current-password"
                   required
                   value={form.password}
-                  onChange={handleChange}
+                  onChange={handleChange} // Maneja el cambio en el campo de contraseña
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 pr-10"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword(!showPassword)} // Cambia el estado de showPassword al hacer clic
                 >
                   {showPassword ? (
                     <FaEyeSlash className="h-5 w-5 text-gray-400 hover:text-gray-500" />
@@ -128,7 +138,7 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting} // Desactiva el botón mientras se está enviando
               className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${
                 isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
               }`}
@@ -159,4 +169,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login; // Exporta el componente Login

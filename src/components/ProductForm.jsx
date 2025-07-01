@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { FiSave, FiArrowLeft} from 'react-icons/fi';
-import { toast } from 'react-toastify';
+import { useState, useEffect } from 'react'; // Importa hooks de React para manejar el estado y efectos secundarios
+import { useParams, useNavigate } from 'react-router-dom'; // Hooks para acceder a parámetros de la URL y navegación
+import { useSelector } from 'react-redux'; // Hook para acceder al estado de Redux
+import { FiSave, FiArrowLeft } from 'react-icons/fi'; // Iconos para guardar y volver atrás
+import { toast } from 'react-toastify'; // Biblioteca para mostrar notificaciones
 
+// Definición de categorías disponibles para los productos
 const categoriasDisponibles = [
   { value: "men's clothing", label: "Ropa Masculina", icon: "👔" },
   { value: "women's clothing", label: "Ropa Femenina", icon: "👗" },
@@ -11,31 +12,35 @@ const categoriasDisponibles = [
   { value: "jewelery", label: "Joyería", icon: "💎" }
 ];
 
+ //Componente ProductForm que permite crear o editar un producto.
+
 const ProductForm = ({ onSubmit }) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { id } = useParams(); // Obtiene el ID del producto de los parámetros de la URL
+  const navigate = useNavigate(); // Hook para la navegación programática
   const productoExistente = useSelector(state =>
-    state.products.items.find(p => p.id === parseInt(id))
+    state.products.items.find(p => p.id === parseInt(id)) // Busca el producto existente en el estado de Redux
   );
 
+  // Estado del formulario inicializado con valores vacíos
   const [form, setForm] = useState({
     title: '',
     price: '',
     description: '',
-    category: id ? '' : '', // se inicializa vacío, pero se setea en useEffect si es edición
+    category: id ? '' : '', // Se inicializa vacío, pero se setea en useEffect si es edición
     image: '',
     stock: '',
     rating: '',
   });
 
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
-  const [formError, setFormError] = useState("");
-  const [imagePreviewError, setImagePreviewError] = useState(false);
+  const [errors, setErrors] = useState({}); // Estado para almacenar errores de validación
+  const [touched, setTouched] = useState({}); // Estado para rastrear campos tocados
+  const [formError, setFormError] = useState(""); // Estado para errores generales del formulario
+  const [imagePreviewError, setImagePreviewError] = useState(false); // Estado para manejar errores de carga de imagen
 
+  // Efecto para inicializar el formulario con datos del producto existente si se está editando
   useEffect(() => {
     if (formError && validateForm()) {
-      setFormError("");
+      setFormError(""); // Limpia el error del formulario si es válido
     }
     if (productoExistente) {
       setForm({
@@ -44,105 +49,115 @@ const ProductForm = ({ onSubmit }) => {
         description: productoExistente.description,
         category: productoExistente.category,
         image: productoExistente.image,
-        stock: productoExistente.stock ?? 100,
-        rating: productoExistente.rating?.rate ?? 4.0,
+        stock: productoExistente.stock ?? 100, // Valor por defecto para stock
+        rating: productoExistente.rating?.rate ?? 4.0, // Valor por defecto para rating
       });
     }
-  }, [productoExistente, formError]);
+  }, [productoExistente, formError]); // Dependencias del efecto
 
+  // Maneja los cambios en los campos del formulario
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-    setImagePreviewError(false);
+    const { name, value } = e.target; // Desestructura el nombre y valor del campo
+    setForm(prev => ({ ...prev, [name]: value })); // Actualiza el estado del formulario
+    setImagePreviewError(false); // Resetea el error de vista previa de imagen
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors(prev => ({ ...prev, [name]: '' })); // Limpia el error si existe
     }
     if (touched[name]) {
-      validateField(name, value);
+      validateField(name, value); // Valida el campo si ha sido tocado
     }
   };
 
+  // Maneja el evento de desenfoque en los campos del formulario
   const handleBlur = (e) => {
-    const { name, value } = e.target;
-    setTouched(prev => ({ ...prev, [name]: true }));
-    validateField(name, value);
+    const { name, value } = e.target; // Desestructura el nombre y valor del campo
+    setTouched(prev => ({ ...prev, [name]: true })); // Marca el campo como tocado
+    validateField(name, value); // Valida el campo
   };
 
+  // Función para validar un campo específico
   const validateField = (name, value) => {
     let error = '';
     switch (name) {
       case 'title':
-        error = value.trim() ? '' : 'El título es requerido';
+        error = value.trim() ? '' : 'El título es requerido'; // Valida el título
         break;
       case 'price':
-        error = !value || parseFloat(value) <= 0 ? 'El precio debe ser mayor a 0' : '';
+        error = !value || parseFloat(value) <= 0 ? 'El precio debe ser mayor a 0' : ''; // Valida el precio
         break;
       case 'description':
-        error = value.trim() ? '' : 'La descripción es requerida';
+        error = value.trim() ? '' : 'La descripción es requerida'; // Valida la descripción
         break;
       case 'image':
-        error = value.trim() ? '' : 'La URL de imagen es requerida';
+        error = value.trim() ? '' : 'La URL de imagen es requerida'; // Valida la URL de imagen
         break;
       case 'stock':
-        error = !value || parseInt(value) < 0 ? 'El stock debe ser mayor o igual a 0' : '';
+        error = !value || parseInt(value) < 0 ? 'El stock debe ser mayor o igual a 0' : ''; // Valida el stock
         break;
       case 'rating':
-        error = value && (parseFloat(value) < 0 || parseFloat(value) > 5) ? 'La valoración debe estar entre 0 y 5' : '';
+        error = value && (parseFloat(value) < 0 || parseFloat(value) > 5) ? 'La valoración debe estar entre 0 y 5' : ''; // Valida la valoración
         break;
       default:
         break;
     }
-    setErrors(prev => ({ ...prev, [name]: error }));
+    setErrors(prev => ({ ...prev, [name]: error })); // Actualiza el estado de errores
   };
 
+  // Función para validar todo el formulario
   const validateForm = () => {
     const newErrors = {};
-    if (!form.title.trim()) newErrors.title = 'El título es requerido';
-    if (!form.price || parseFloat(form.price) <= 0) newErrors.price = 'El precio debe ser mayor a 0';
-    if (!form.description.trim()) newErrors.description = 'La descripción es requerida';
-    if (!form.image.trim()) newErrors.image = 'La URL de imagen es requerida';
-    if (!form.stock || parseInt(form.stock) < 0) newErrors.stock = 'El stock debe ser mayor o igual a 0';
+    if (!form.title.trim()) newErrors.title = 'El título es requerido'; // Valida el título
+    if (!form.price || parseFloat(form.price) <= 0) newErrors.price = 'El precio debe ser mayor a 0'; // Valida el precio
+    if (!form.description.trim()) newErrors.description = 'La descripción es requerida'; // Valida la descripción
+    if (!form.image.trim()) newErrors.image = 'La URL de imagen es requerida'; // Valida la URL de imagen
+    if (!form.stock || parseInt(form.stock) < 0) newErrors.stock = 'El stock debe ser mayor o igual a 0'; // Valida el stock
     if (form.rating && (parseFloat(form.rating) < 0 || parseFloat(form.rating) > 5)) {
-      newErrors.rating = 'La valoración debe estar entre 0 y 5';
+      newErrors.rating = 'La valoración debe estar entre 0 y 5'; // Valida la valoración
     }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors(newErrors); // Actualiza el estado de errores
+    return Object.keys(newErrors).length === 0; // Retorna true si no hay errores
   };
 
+  // Maneja el envío del formulario
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Previene el comportamiento por defecto del formulario
     if (!validateForm()) {
-      setTouched({ title: true, price: true, description: true, image: true, stock: true, rating: true });
-      setFormError("Por favor, completa todos los campos obligatorios correctamente.");
+      // Si el formulario no es válido
+      setTouched({ title: true, price: true, description: true, image: true, stock: true, rating: true }); // Marca todos los campos como tocados
+      setFormError("Por favor, completa todos los campos obligatorios correctamente."); // Establece un error general
       return;
     }
-    setFormError("");
+    setFormError(""); // Limpia el error del formulario
     const productoFinal = {
       ...form,
-      id: id ? parseInt(id) : Date.now(),
-      price: parseFloat(form.price),
-      stock: parseInt(form.stock) || 0,
-      rating: { rate: parseFloat(form.rating) || 4.0, count: 0 },
+      id: id ? parseInt(id) : Date.now(), // Asigna un ID nuevo o existente
+      price: parseFloat(form.price), // Convierte el precio a número
+      stock: parseInt(form.stock) || 0, // Convierte el stock a número
+      rating: { rate: parseFloat(form.rating) || 4.0, count: 0 }, // Asigna la valoración
     };
-    onSubmit(productoFinal);
-    toast.success(id ? 'Producto editado exitosamente' : 'Producto creado exitosamente');
-    navigate('/');
+    onSubmit(productoFinal); // Llama a la función onSubmit con el producto final
+    toast.success(id ? 'Producto editado exitosamente' : 'Producto creado exitosamente'); // Muestra una notificación de éxito
+    navigate('/'); // Navega a la página principal
   };
 
+  // Función para obtener datos de la categoría
   const getCategoryData = (categoryValue) => {
-    return categoriasDisponibles.find(cat => cat.value === categoryValue) || categoriasDisponibles[0];
+    return categoriasDisponibles.find(cat => cat.value === categoryValue) || categoriasDisponibles[0]; // Retorna la categoría correspondiente o la primera
   };
 
-  const currentCategory = getCategoryData(form.category);
+  const currentCategory = getCategoryData(form.category); // Obtiene la categoría actual
 
+  // Maneja el error de carga de imagen
   const handleImageError = () => {
-    setImagePreviewError(true);
+    setImagePreviewError(true); // Establece el error de vista previa de imagen
   };
 
+  // Maneja la carga de imagen
   const handleImageLoad = () => {
-    setImagePreviewError(false);
+    setImagePreviewError(false); // Limpia el error de vista previa de imagen
   };
 
+  // Función para reiniciar el formulario
   const handleReset = () => {
     setForm({
       title: '',
@@ -153,11 +168,14 @@ const ProductForm = ({ onSubmit }) => {
       stock: '',
       rating: '',
     });
-    setErrors({});
-    setTouched({});
-    setFormError("");
-    setImagePreviewError(false);
+    setErrors({}); // Limpia los errores
+    setTouched({}); // Limpia los campos tocados
+    setFormError(""); // Limpia el error del formulario
+    setImagePreviewError(false); // Limpia el error de vista previa de imagen
   };
+
+// Exporta el componente para su uso en otras partes de la aplicación
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
@@ -496,4 +514,4 @@ const ProductForm = ({ onSubmit }) => {
   );
 };
 
-export default ProductForm;
+export default ProductForm; 
