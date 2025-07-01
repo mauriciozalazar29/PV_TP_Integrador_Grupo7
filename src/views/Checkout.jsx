@@ -89,31 +89,51 @@ const Checkout = () => {
         icon: <FaCreditCard className="text-blue-700" size={24} />,
         title: "Tarjeta de crédito/débito",
         subtitle: "Visa, MasterCard, Amex, etc.",
-        color: "blue"
+        borderColor: selected ? "border-blue-500" : "border-gray-200",
+        ringColor: selected ? "ring-2 ring-blue-200" : "",
+        bgColor: selected ? "bg-blue-50" : "",
+        iconBgColor: selected ? "bg-blue-100" : "bg-gray-100",
+        checkBgColor: "bg-blue-500"
       },
       paypal: {
         icon: <FaPaypal className="text-blue-500" size={24} />,
         title: "PayPal",
         subtitle: "Paga con tu cuenta PayPal",
-        color: "blue"
+        borderColor: selected ? "border-blue-500" : "border-gray-200",
+        ringColor: selected ? "ring-2 ring-blue-200" : "",
+        bgColor: selected ? "bg-blue-50" : "",
+        iconBgColor: selected ? "bg-blue-100" : "bg-gray-100",
+        checkBgColor: "bg-blue-500"
       },
       mercado: {
         icon: <SiMercadopago className="text-cyan-500" size={24} />,
         title: "Mercado Pago",
         subtitle: "Pagá con Mercado Pago",
-        color: "cyan"
+        borderColor: selected ? "border-cyan-500" : "border-gray-200",
+        ringColor: selected ? "ring-2 ring-cyan-200" : "",
+        bgColor: selected ? "bg-cyan-50" : "",
+        iconBgColor: selected ? "bg-cyan-100" : "bg-gray-100",
+        checkBgColor: "bg-cyan-500"
       },
       'Tarjeta Naranja': {
         icon: <GiOrange className="text-orange-500" size={24} />,
         title: "Tarjeta Naranja",
         subtitle: "Solo Tarjeta Naranja",
-        color: "orange"
+        borderColor: selected ? "border-orange-500" : "border-gray-200",
+        ringColor: selected ? "ring-2 ring-orange-200" : "",
+        bgColor: selected ? "bg-orange-50" : "",
+        iconBgColor: selected ? "bg-orange-100" : "bg-gray-100",
+        checkBgColor: "bg-orange-500"
       },
       Modo: {
         icon: <BsPhone className="text-purple-500" size={24} />,
         title: "Modo",
         subtitle: "Pagá desde tu app bancaria",
-        color: "purple"
+        borderColor: selected ? "border-purple-500" : "border-gray-200",
+        ringColor: selected ? "ring-2 ring-purple-200" : "",
+        bgColor: selected ? "bg-purple-50" : "",
+        iconBgColor: selected ? "bg-purple-100" : "bg-gray-100",
+        checkBgColor: "bg-purple-500"
       }
     };
 
@@ -121,18 +141,15 @@ const Checkout = () => {
     
     return (
       <div 
-        className={`relative p-4 border rounded-xl cursor-pointer transition-all duration-200
-          ${selected ? `border-${currentMethod.color}-500 ring-2 ring-${currentMethod.color}-200 bg-${currentMethod.color}-50` : 'border-gray-200 hover:border-gray-300'}
-          flex items-start gap-3
-        `}
+        className={`relative p-4 border rounded-xl cursor-pointer transition-all duration-200 hover:border-gray-300 flex items-start gap-3 ${currentMethod.borderColor} ${currentMethod.ringColor} ${currentMethod.bgColor}`}
         onClick={onClick}
       >
         {selected && (
-          <div className={`absolute -top-2 -right-2 bg-${currentMethod.color}-500 text-white rounded-full p-1`}>
+          <div className={`absolute -top-2 -right-2 text-white rounded-full p-1 ${currentMethod.checkBgColor}`}>
             <BsCheckCircleFill size={16} />
           </div>
         )}
-        <div className={`p-2 rounded-lg bg-${currentMethod.color}-100 text-${currentMethod.color}-600`}>
+        <div className={`p-2 rounded-lg ${currentMethod.iconBgColor}`}>
           {currentMethod.icon}
         </div>
         <div>
