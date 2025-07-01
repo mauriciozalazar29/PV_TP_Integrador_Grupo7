@@ -108,7 +108,7 @@ const HeroSlider = () => {
         <img
           src={promoFija}
           alt="Promoción Mercado Pago - 3 y 6 cuotas sin interés"
-          className="w-full h-full object-cover object-center
+          className="w-full h-full object-contain object-center
                      hover:scale-[1.02] transition-transform duration-300"
           loading="lazy"
         />

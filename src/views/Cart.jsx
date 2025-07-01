@@ -40,7 +40,7 @@ const Cart = () => {
           </div>
         ) : (
           <div className="grid lg:grid-cols-3 gap-10">
-            {/* Cart Items */}
+
             <div className="lg:col-span-2">
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                 <div className="p-6 border-b border-gray-100 bg-blue-50">
@@ -49,7 +49,7 @@ const Cart = () => {
                 <div className="divide-y divide-gray-100">
                   {cart.map((item, i) => (
                     <div key={i} className="p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-4 items-stretch">
-                      {/* Product Image */}
+
                       <div className="flex-shrink-0 self-center sm:self-auto">
                         <img 
                           src={item.image} 
@@ -57,7 +57,7 @@ const Cart = () => {
                           className="w-24 h-24 object-contain rounded-xl border border-gray-200 bg-white shadow-sm" 
                         />
                       </div>
-                      {/* Product Info + Price */}
+                    
                       <div className="flex-1 min-w-0 w-full flex flex-col gap-2 justify-between">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 w-full">
                           <div className="flex-1">
@@ -71,7 +71,7 @@ const Cart = () => {
                               </div>
                             )}
                           </div>
-                          {/* Price: left in mobile, right in desktop */}
+                   
                           <div className="text-left sm:text-right flex-shrink-0 min-w-[90px]">
                             <div className="text-lg font-bold text-gray-800">
                               ${(item.price * item.quantity).toFixed(2)}
@@ -83,7 +83,7 @@ const Cart = () => {
                             )}
                           </div>
                         </div>
-                        {/* Responsive controls */}
+
                         <div className="flex flex-col sm:flex-row gap-2 mt-2 w-full items-stretch sm:items-center">
                           <div className="flex items-center gap-3 w-full sm:w-auto">
                             <span className="text-sm text-gray-500">Cantidad:</span>
@@ -120,7 +120,7 @@ const Cart = () => {
                 </div>
               </div>
             </div>
-            {/* Order Summary */}
+
             <div className="lg:col-span-1">
               <div className="bg-white rounded-2xl shadow-lg p-8 sticky top-6 flex flex-col gap-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-2">Resumen del pedido</h2>

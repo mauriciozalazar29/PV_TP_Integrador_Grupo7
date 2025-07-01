@@ -20,7 +20,7 @@ const ProductDetail = () => {
   const isFav = favorites.includes(parseInt(id));
 
   const [tab, setTab] = useState('descripcion');
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
   const [isZoomed, setIsZoomed] = useState(false);
   const [talleSeleccionado, setTalleSeleccionado] = useState(null);
   const [cantidad, setCantidad] = useState(1);
@@ -122,14 +122,14 @@ const ProductDetail = () => {
         
           <div className="p-6">
             <div
-              onMouseMove={(e) => {
+              onClick={() => setIsZoomed(z => !z)}
+              onMouseMove={e => {
+                if (!isZoomed) return;
                 const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
                 const x = ((e.clientX - left) / width) * 100;
                 const y = ((e.clientY - top) / height) * 100;
                 setZoomPosition({ x, y });
               }}
-              onMouseEnter={() => setIsZoomed(true)}
-              onMouseLeave={() => setIsZoomed(false)}
               className="relative w-full h-96 lg:h-[500px] overflow-hidden rounded-xl border border-gray-200 cursor-zoom-in"
             >
               <img
@@ -141,24 +141,34 @@ const ProductDetail = () => {
                     ? { transform: 'scale(2.5)', transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` }
                     : { transform: 'scale(1)' }
                 }
+                onTouchMove={e => {
+                  if (!isZoomed) return;
+                  const touch = e.touches[0];
+                  const target = e.currentTarget.parentElement;
+                  if (target) {
+                    const { left, top, width, height } = target.getBoundingClientRect();
+                    const x = ((touch.clientX - left) / width) * 100;
+                    const y = ((touch.clientY - top) / height) * 100;
+                    setZoomPosition({ x, y });
+                  }
+                }}
               />
             </div>
 
-            <div className="flex gap-3 mt-4 lg:hidden">
+            <div className="flex gap-3 mt-4 lg:hidden justify-end">
               <button
                 onClick={() => dispatch(toggleFavorite(product.id))}
-                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
+                className={`p-3 rounded-lg font-medium transition-colors ${
                   isFav 
                     ? 'bg-red-100 text-red-700 border border-red-200' 
                     : 'bg-gray-100 text-gray-700 border border-gray-200'
                 }`}
               >
-                {isFav ? '❤️ En Favoritos' : '🤍 Favoritos'}
+                {isFav ? '❤️' : '🤍'}
               </button>
-              
               <button
                 onClick={() => navigate(`/edit/${product.id}`)}
-                className="px-4 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+                className="p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
               >
                 ✏️
               </button>

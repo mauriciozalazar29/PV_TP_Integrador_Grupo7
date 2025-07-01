@@ -2,21 +2,11 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { clearCart } from '../features/cart/cartSlice';
 import { useNavigate } from 'react-router-dom';
-import { 
-  FaMapMarkerAlt, 
-  FaUser, 
-  FaCity, 
-  FaEnvelope, 
-  FaMoneyCheckAlt, 
-  FaCreditCard, 
-  FaPaypal, 
-  FaIdCard,
-  FaShieldAlt
-} from 'react-icons/fa';
+import { FaMapMarkerAlt, FaUser, FaCity, FaEnvelope,FaCreditCard, FaPaypal, FaIdCard} from 'react-icons/fa';
 import { SiMercadopago } from 'react-icons/si';
 import { GiOrange } from 'react-icons/gi';
 import { BsPhone, BsCheckCircleFill } from 'react-icons/bs';
-import { MdMarkEmailRead, MdPayment } from 'react-icons/md';
+import { MdPayment } from 'react-icons/md';
 import { Bs123 } from 'react-icons/bs';
 
 const Checkout = () => {
@@ -48,9 +38,11 @@ const Checkout = () => {
         ? ''
         : 'Ingrese un apellido válido (solo letras, 2-30 caracteres)';
     if ('dni' in fieldValues)
-      temp.dni = /^\d{7,9}$/.test(fieldValues.dni)
-        ? ''
-        : 'Ingrese un DNI válido (7-9 dígitos numéricos)';
+      temp.dni = fieldValues.dni
+        ? (/^\d{7,9}$/.test(fieldValues.dni)
+            ? ''
+            : 'Ingrese un DNI válido (7-9 dígitos numéricos)')
+        : 'El DNI es obligatorio';
     if ('correo' in fieldValues)
       temp.correo = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(fieldValues.correo) ? '' : 'Correo inválido';
     if ('direccion' in fieldValues)
@@ -86,7 +78,7 @@ const Checkout = () => {
         navigate('/success');
       }, 1200);
     } else {
-      setTouched({ nombre: true, apellido: true, correo: true, direccion: true, cp: true, ciudad: true });
+      setTouched({ nombre: true, apellido: true, dni: true, correo: true, direccion: true, cp: true, ciudad: true });
       setSuccess(false);
     }
   };

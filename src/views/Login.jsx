@@ -55,12 +55,6 @@ const Login = () => {
           </p>
         </div>
 
-        {/* {authError && (
-          <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
-            <p className="text-sm text-red-700 dark:text-red-300">{authError}</p>
-          </div>
-        )} */}
-
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>

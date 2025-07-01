@@ -64,8 +64,8 @@ const Home = () => {
   for (let i = 0; i < nonElectronics.length; i += 4) {
     rows.push(nonElectronics.slice(i, i + 4));
   }
-  const topRows = rows.slice(0, 2); // Ahora solo 2 filas arriba
-  const bottomRows = rows.slice(2, 5); // El resto abajo (hasta 3 filas)
+  const topRows = rows.slice(0, 2);
+  const bottomRows = rows.slice(2, 5); 
 
   // Slider auto-scroll
   useEffect(() => {
