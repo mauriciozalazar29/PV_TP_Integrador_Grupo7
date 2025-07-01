@@ -127,314 +127,315 @@ const ProductDetail = () => {
   const precioOriginalFicticio = calcularPrecioOriginal(product.price); // Calcula el precio original ficticio
   const cuotas = calcularCuotas(product.price); // Calcula las cuotas
   
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-2xl shadow-lg overflow-hidden">
-        
-          <div className="p-6">
-            <div
-              onClick={() => setIsZoomed(z => !z)}
-              onMouseMove={e => {
-                if (!isZoomed) return;
-                const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-                const x = ((e.clientX - left) / width) * 100;
-                const y = ((e.clientY - top) / height) * 100;
-                setZoomPosition({ x, y });
-              }}
-              className="relative w-full h-96 lg:h-[500px] overflow-hidden rounded-xl border border-gray-200 cursor-zoom-in"
-            >
-              <img
-                src={product.image}
-                alt={product.title}
-                className="w-full h-full object-contain transition-transform duration-300 ease-out"
-                style={
-                  isZoomed
-                    ? { transform: 'scale(2.5)', transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` }
-                    : { transform: 'scale(1)' }
+ return (
+  <div className="min-h-screen bg-gray-50 py-8"> {/* Contenedor principal con fondo y padding */}
+    <div className="max-w-7xl mx-auto px-4"> {/* Contenedor centrado con un ancho máximo */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-2xl shadow-lg overflow-hidden"> {/* Estructura de la tarjeta de producto */}
+      
+        <div className="p-6"> {/* Sección de imagen del producto */}
+          <div
+            onClick={() => setIsZoomed(z => !z)} // Alterna el estado de zoom al hacer clic
+            onMouseMove={e => {
+              if (!isZoomed) return; // Solo ejecuta si está en modo zoom
+              const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+              const x = ((e.clientX - left) / width) * 100; // Calcula la posición X para el zoom
+              const y = ((e.clientY - top) / height) * 100; // Calcula la posición Y para el zoom
+              setZoomPosition({ x, y }); // Actualiza la posición del zoom
+            }}
+            className="relative w-full h-96 lg:h-[500px] overflow-hidden rounded-xl border border-gray-200 cursor-zoom-in" // Estilos para la imagen
+          >
+            <img
+              src={product.image} // Imagen del producto
+              alt={product.title} // Texto alternativo para la imagen
+              className="w-full h-full object-contain transition-transform duration-300 ease-out" // Estilos de la imagen
+              style={
+                isZoomed
+                  ? { transform: 'scale(2.5)', transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` } // Estilo de zoom
+                  : { transform: 'scale(1)' } // Estilo normal
+              }
+              onTouchMove={e => {
+                if (!isZoomed) return; // Solo ejecuta si está en modo zoom
+                const touch = e.touches[0]; // Obtiene la posición del toque
+                const target = e.currentTarget.parentElement; // Obtiene el contenedor de la imagen
+                if (target) {
+                  const { left, top, width, height } = target.getBoundingClientRect();
+                  const x = ((touch.clientX - left) / width) * 100; // Calcula la posición X para el zoom
+                  const y = ((touch.clientY - top) / height) * 100; // Calcula la posición Y para el zoom
+                  setZoomPosition({ x, y }); // Actualiza la posición del zoom
                 }
-                onTouchMove={e => {
-                  if (!isZoomed) return;
-                  const touch = e.touches[0];
-                  const target = e.currentTarget.parentElement;
-                  if (target) {
-                    const { left, top, width, height } = target.getBoundingClientRect();
-                    const x = ((touch.clientX - left) / width) * 100;
-                    const y = ((touch.clientY - top) / height) * 100;
-                    setZoomPosition({ x, y });
-                  }
-                }}
-              />
-            </div>
+              }}
+            />
+          </div>
 
-            <div className="flex gap-3 mt-4 lg:hidden justify-end">
+          <div className="flex gap-3 mt-4 lg:hidden justify-end"> {/* Botones de acción en móvil */}
+            <button
+              onClick={() => dispatch(toggleFavorite(product.id))} // Alterna el estado de favorito
+              className={`p-3 rounded-lg font-medium transition-colors ${
+                isFav 
+                  ? 'bg-red-100 text-red-700 border border-red-200' 
+                  : 'bg-gray-100 text-gray-700 border border-gray-200'
+              }`}
+            >
+              {isFav ? '❤️' : '🤍'} {/* Muestra el icono de favorito */}
+            </button>
+            <button
+              onClick={() => navigate(`/edit/${product.id}`)} // Navega a la página de edición del producto
+              className="p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+            >
+              ✏️ {/* Icono de edición */}
+            </button>
+          </div>
+        </div>
+
+        {/* Sección de Información */}
+        <div className="p-6 lg:p-8"> {/* Contenedor de información del producto */}
+          {/* Header con título y acciones */}
+          <div className="flex justify-between items-start mb-6"> {/* Contenedor para el título y botones */}
+            <div className="flex-1"> {/* Contenedor del título */}
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">
+                {product.title} {/* Título del producto */}
+              </h1>
+              <p className="text-sm text-gray-500 uppercase tracking-wide">
+                SKU: {product.category?.replace(/\s+/g, '').toUpperCase()}{product.id.toString().padStart(3, '0')} {/* SKU del producto */}
+              </p>
+            </div>
+            
+            {/* Botones de acción desktop */}
+            <div className="hidden lg:flex gap-3"> {/* Botones visibles solo en desktop */}
               <button
-                onClick={() => dispatch(toggleFavorite(product.id))}
-                className={`p-3 rounded-lg font-medium transition-colors ${
+                onClick={() => dispatch(toggleFavorite(product.id))} // Alterna el estado de favorito
+                className={`p-3 rounded-lg transition-colors ${
                   isFav 
                     ? 'bg-red-100 text-red-700 border border-red-200' 
                     : 'bg-gray-100 text-gray-700 border border-gray-200'
                 }`}
               >
-                {isFav ? '❤️' : '🤍'}
+                {isFav ? '❤️' : '🤍'} {/* Muestra el icono de favorito */}
               </button>
+              
               <button
-                onClick={() => navigate(`/edit/${product.id}`)}
+                onClick={() => navigate(`/edit/${product.id}`)} // Navega a la página de edición del producto
                 className="p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
               >
-                ✏️
+                ✏️ {/* Icono de edición */}
               </button>
             </div>
           </div>
 
-          {/* Sección de Información */}
-          <div className="p-6 lg:p-8">
-            {/* Header con título y acciones */}
-            <div className="flex justify-between items-start mb-6">
-              <div className="flex-1">
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">
-                  {product.title}
-                </h1>
-                <p className="text-sm text-gray-500 uppercase tracking-wide">
-                  SKU: {product.category?.replace(/\s+/g, '').toUpperCase()}{product.id.toString().padStart(3, '0')}
-                </p>
-              </div>
-              
-              {/* Botones de acción desktop */}
-              <div className="hidden lg:flex gap-3">
-                <button
-                  onClick={() => dispatch(toggleFavorite(product.id))}
-                  className={`p-3 rounded-lg transition-colors ${
-                    isFav 
-                      ? 'bg-red-100 text-red-700 border border-red-200' 
-                      : 'bg-gray-100 text-gray-700 border border-gray-200'
-                  }`}
-                >
-                  {isFav ? '❤️' : '🤍'}
-                </button>
-                
-                <button
-                  onClick={() => navigate(`/edit/${product.id}`)}
-                  className="p-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
-                >
-                  ✏️
-                </button>
-              </div>
-            </div>
-
-            {/* Precio y valoración */}
-            <div className="mb-6">
-              <div className="flex items-baseline gap-3 mb-2">
-                <span className="text-3xl lg:text-4xl font-bold text-gray-900">
-                  ${product.price}
-                </span>
-                <span className="text-lg text-gray-500 line-through">
-                  ${precioOriginalFicticio}
-                </span>
-                <span className="bg-green-100 text-green-800 text-sm font-medium px-2 py-1 rounded">
-                  15% OFF
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-yellow-400">
-                      {i < Math.floor(rating) ? '★' : '☆'}
-                    </span>
-                  ))}
-                </div>
-                <span className="text-sm text-gray-600">
-                  ({rating.toFixed(1)}) • {reviewCount} reseñas
-                </span>
-              </div>
-            </div>
-
-            {/* Opciones de pago */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <h3 className="font-semibold text-blue-900 mb-2">💳 Opciones de pago</h3>
-              <div className="space-y-1 text-sm text-blue-800">
-                <p>3 cuotas sin interés de <strong>${cuotas.tres}</strong></p>
-                <p>6 cuotas sin interés de <strong>${cuotas.seis}</strong></p>
-                <p>12 cuotas fijas de <strong>${cuotas.doce}</strong></p>
-              </div>
-              <button className="text-blue-600 text-sm font-medium mt-2 hover:underline">
-                Ver todos los medios de pago →
-              </button>
-            </div>
-
-            {/* Selección de talle */}
-            {mostrarTalles && (
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-gray-900">Talle Argentino</h3>
-                </div>
-                
-                <div className="grid grid-cols-4 gap-2">
-                  {['S', 'M', 'L', 'XL', 'XXL'].map(talle => (
-                    <button
-                        key={talle}
-                        onClick={() => {
-                          setTalleSeleccionado(talle);
-                          setErrorTalle('');
-                        }}
-                        className={`py-3 px-4 border rounded-lg font-medium transition-all ${
-                          talleSeleccionado === talle 
-                            ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                            : 'border-gray-300 hover:border-gray-400'
-                        }`}
-                      >
-                        {talle}
-                    </button>
-                  ))}
-                </div>
-                  {errorTalle && (
-                    <p className="text-sm text-red-600 mt-2 font-medium">
-                      {errorTalle}
-                    </p>
-                  )}
-              </div>  
-           )}
-
-            {/* Selector de cantidad */}
-            <div className="mb-6">
-              <h3 className="font-semibold text-gray-900 mb-3">Cantidad</h3>
-              <div className="flex items-center border border-gray-300 rounded-lg w-fit">
-                <button
-                  onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-                  className="px-4 py-2 hover:bg-gray-100 transition-colors"
-                >
-                  −
-                </button>
-                <span className="px-4 py-2 font-medium min-w-[50px] text-center">
-                  {cantidad}
-                </span>
-                <button
-                  onClick={() => setCantidad(cantidad + 1)}
-                  className="px-4 py-2 hover:bg-gray-100 transition-colors"
-                >
-                  +
-                </button>
-              </div>
+          {/* Precio y valoración */}
+          <div className="mb-6"> {/* Contenedor para precio y valoración */}
+            <div className="flex items-baseline gap-3 mb-2"> {/* Contenedor para precio */}
+              <span className="text-3xl lg:text-4xl font-bold text-gray-900">
+                ${product.price} {/* Precio actual del producto */}
+              </span>
+              <span className="text-lg text-gray-500 line-through">
+                ${precioOriginalFicticio} {/* Precio original ficticio */}
+              </span>
+              <span className="bg-green-100 text-green-800 text-sm font-medium px-2 py-1 rounded">
+                15% OFF {/* Descuento aplicado */}
+              </span>
             </div>
             
-            <div className="space-y-3">
+            <div className="flex items-center gap-2"> {/* Contenedor para estrellas de valoración */}
+              <div className="flex">
+                {[...Array(5)].map((_, i) => ( // Muestra 5 estrellas
+                  <span key={i} className="text-yellow-400">
+                    {i < Math.floor(rating) ? '★' : '☆'} {/* Estrella llena o vacía */}
+                  </span>
+                ))}
+              </div>
+              <span className="text-sm text-gray-600">
+                ({rating.toFixed(1)}) • {reviewCount} reseñas {/* Muestra la valoración y el conteo de reseñas */}
+              </span>
+            </div>
+          </div>
+
+          {/* Opciones de pago */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6"> {/* Contenedor para opciones de pago */}
+            <h3 className="font-semibold text-blue-900 mb-2">💳 Opciones de pago</h3>
+            <div className="space-y-1 text-sm text-blue-800"> {/* Detalles de las cuotas */}
+              <p>3 cuotas sin interés de <strong>${cuotas.tres}</strong></p>
+              <p>6 cuotas sin interés de <strong>${cuotas.seis}</strong></p>
+              <p>12 cuotas fijas de <strong>${cuotas.doce}</strong></p>
+            </div>
+            <button className="text-blue-600 text-sm font-medium mt-2 hover:underline">
+              Ver todos los medios de pago → {/* Enlace para ver más opciones de pago */}
+            </button>
+          </div>
+
+          {/* Selección de talle */}
+          {mostrarTalles && ( // Solo muestra si se deben mostrar talles
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-semibold text-gray-900">Talle Argentino</h3>
+              </div>
+              
+              <div className="grid grid-cols-4 gap-2"> {/* Contenedor para botones de talles */}
+                {['S', 'M', 'L', 'XL', 'XXL'].map(talle => ( // Muestra botones para cada talle
+                  <button
+                    key={talle}
+                    onClick={() => {
+                      setTalleSeleccionado(talle); // Establece el talle seleccionado
+                      setErrorTalle(''); // Resetea el error
+                    }}
+                    className={`py-3 px-4 border rounded-lg font-medium transition-all ${
+                      talleSeleccionado === talle 
+                        ? 'border-blue-500 bg-blue-50 text-blue-700' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                  >
+                    {talle} {/* Muestra el talle */}
+                  </button>
+                ))}
+              </div>
+              {errorTalle && ( // Muestra error si no se seleccionó un talle
+                <p className="text-sm text-red-600 mt-2 font-medium">
+                  {errorTalle}
+                </p>
+              )}
+            </div>  
+          )}
+
+          {/* Selector de cantidad */}
+          <div className="mb-6">
+            <h3 className="font-semibold text-gray-900 mb-3">Cantidad</h3>
+            <div className="flex items-center border border-gray-300 rounded-lg w-fit"> {/* Contenedor para selector de cantidad */}
               <button
-                onClick={agregarAlCarrito}
-                className="w-full bg-black text-white py-4 rounded-lg font-semibold text-lg hover:bg-gray-800 transition-colors"
+                onClick={() => setCantidad(Math.max(1, cantidad - 1))} // Disminuye la cantidad
+                className="px-4 py-2 hover:bg-gray-100 transition-colors"
               >
-                AGREGAR AL CARRITO
+                −
+              </button>
+              <span className="px-4 py-2 font-medium min-w-[50px] text-center">
+                {cantidad} {/* Muestra la cantidad actual */}
+              </span>
+              <button
+                onClick={() => setCantidad(cantidad + 1)} // Aumenta la cantidad
+                className="px-4 py-2 hover:bg-gray-100 transition-colors"
+              >
+                +
               </button>
             </div>
-
-            {/* Información adicional */}
-            <div className="mt-6 space-y-2 text-sm text-gray-600">
-              <p>✅ Envío gratis a todo el país</p>
-              <p>🔄 Devolución gratuita hasta 30 días</p>
-              <p>🛡️ Garantía de fábrica</p>
-            </div>
           </div>
-        </div>
-
-        {/* Tabs de información */}
-        <div className="bg-white rounded-2xl shadow-lg mt-8 overflow-hidden">
-          <div className="border-b border-gray-200">
-            <div className="flex">
-              {[
-                { id: 'descripcion', label: 'Descripción' },
-                { id: 'detalles', label: 'Especificaciones' },
-                ...(mostrarGuiaDeTalles ? [{ id: 'guia', label: 'Guía de Talles' }] : [])
-              ].map((tabItem) => (
-                <button
-                  key={tabItem.id}
-                  onClick={() => setTab(tabItem.id)}
-                  className={`px-6 py-4 font-medium transition-colors ${
-                    tab === tabItem.id
-                      ? 'border-b-2 border-blue-500 text-blue-600'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {tabItem.label}
-                </button>
-              ))}
-            </div>
+          
+          <div className="space-y-3">
+            <button
+              onClick={agregarAlCarrito} // Agrega el producto al carrito
+              className="w-full bg-black text-white py-4 rounded-lg font-semibold text-lg hover:bg-gray-800 transition-colors"
+            >
+              AGREGAR AL CARRITO
+            </button>
           </div>
 
-          <div className="p-6">
-            {tab === 'descripcion' && (
-              <div className="prose max-w-none">
-                <p className="text-gray-700 leading-relaxed">{product.description}</p>
-              </div>
-            )}
-
-            {tab === 'detalles' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {obtenerDetalles().map((detalle, i) => {
-                  const [key, value] = detalle.split(': ');
-                  return (
-                    <div key={i} className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="font-medium text-gray-900">{key}</span>
-                      <span className="text-gray-600">{value}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {tab === 'guia' && mostrarGuiaDeTalles && (
-              <div>
-                <h3 className="font-semibold text-lg mb-4">Guía de Talles</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-gray-200">
-                        <th className="text-left py-2 px-4">Talle</th>
-                        <th className="text-left py-2 px-4">Pecho (cm)</th>
-                        <th className="text-left py-2 px-4">Cintura (cm)</th>
-                        <th className="text-left py-2 px-4">Cadera (cm)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b border-gray-100">
-                        <td className="py-2 px-4 font-medium">S</td>
-                        <td className="py-2 px-4">86-91</td>
-                        <td className="py-2 px-4">76-81</td>
-                        <td className="py-2 px-4">91-96</td>
-                      </tr>
-                      <tr className="border-b border-gray-100">
-                        <td className="py-2 px-4 font-medium">M</td>
-                        <td className="py-2 px-4">92-97</td>
-                        <td className="py-2 px-4">82-87</td>
-                        <td className="py-2 px-4">97-102</td>
-                      </tr>
-                      <tr className="border-b border-gray-100">
-                        <td className="py-2 px-4 font-medium">L</td>
-                        <td className="py-2 px-4">98-104</td>
-                        <td className="py-2 px-4">88-94</td>
-                        <td className="py-2 px-4">103-109</td>
-                      </tr>
-                      <tr className="border-b border-gray-100">
-                        <td className="py-2 px-4 font-medium">XL</td>
-                        <td className="py-2 px-4">105-112</td>
-                        <td className="py-2 px-4">95-102</td>
-                        <td className="py-2 px-4">110-117</td>
-                      </tr>
-                      <tr>
-                        <td className="py-2 px-4 font-medium">XXL</td>
-                        <td className="py-2 px-4">113-120</td>
-                        <td className="py-2 px-4">103-110</td>
-                        <td className="py-2 px-4">118-125</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
+          {/* Información adicional */}
+          <div className="mt-6 space-y-2 text-sm text-gray-600">
+            <p>✅ Envío gratis a todo el país</p>
+            <p>🔄 Devolución gratuita hasta 30 días</p>
+            <p>🛡️ Garantía de fábrica</p>
           </div>
         </div>
       </div>
+
+      {/* Tabs de información */}
+      <div className="bg-white rounded-2xl shadow-lg mt-8 overflow-hidden"> {/* Contenedor para las pestañas */}
+        <div className="border-b border-gray-200">
+          <div className="flex"> {/* Contenedor para las pestañas */}
+            {[
+              { id: 'descripcion', label: 'Descripción' },
+              { id: 'detalles', label: 'Especificaciones' },
+              ...(mostrarGuiaDeTalles ? [{ id: 'guia', label: 'Guía de Talles' }] : []) // Agrega la pestaña de guía de talles si corresponde
+            ].map((tabItem) => (
+              <button
+                key={tabItem.id}
+                onClick={() => setTab(tabItem.id)} // Cambia la pestaña activa
+                className={`px-6 py-4 font-medium transition-colors ${
+                  tab === tabItem.id
+                    ? 'border-b-2 border-blue-500 text-blue-600' // Estilo para la pestaña activa
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {tabItem.label} {/* Muestra el nombre de la pestaña */}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="p-6"> {/* Contenedor para el contenido de la pestaña */}
+          {tab === 'descripcion' && (
+            <div className="prose max-w-none">
+              <p className="text-gray-700 leading-relaxed">{product.description}</p> {/* Descripción del producto */}
+            </div>
+          )}
+
+          {tab === 'detalles' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> {/* Contenedor para detalles del producto */}
+              {obtenerDetalles().map((detalle, i) => {
+                const [key, value] = detalle.split(': '); // Separa la clave y el valor
+                return (
+                  <div key={i} className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="font-medium text-gray-900">{key}</span> {/* Muestra la clave */}
+                    <span className="text-gray-600">{value}</span> {/* Muestra el valor */}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {tab === 'guia' && mostrarGuiaDeTalles && (
+            <div>
+              <h3 className="font-semibold text-lg mb-4">Guía de Talles</h3>
+              <div className="overflow-x-auto"> {/* Contenedor para la tabla de talles */}
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-2 px-4">Talle</th>
+                      <th className="text-left py-2 px-4">Pecho (cm)</th>
+                      <th className="text-left py-2 px-4">Cintura (cm)</th>
+                      <th className="text-left py-2 px-4">Cadera (cm)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-2 px-4 font-medium">S</td>
+                      <td className="py-2 px-4">86-91</td>
+                      <td className="py-2 px-4">76-81</td>
+                      <td className="py-2 px-4">91-96</td>
+                    </tr>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-2 px-4 font-medium">M</td>
+                      <td className="py-2 px-4">92-97</td>
+                      <td className="py-2 px-4">82-87</td>
+                      <td className="py-2 px-4">97-102</td>
+                    </tr>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-2 px-4 font-medium">L</td>
+                      <td className="py-2 px-4">98-104</td>
+                      <td className="py-2 px-4">88-94</td>
+                      <td className="py-2 px-4">103-109</td>
+                    </tr>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-2 px-4 font-medium">XL</td>
+                      <td className="py-2 px-4">105-112</td>
+                      <td className="py-2 px-4">95-102</td>
+                      <td className="py-2 px-4">110-117</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2 px-4 font-medium">XXL</td>
+                      <td className="py-2 px-4">113-120</td>
+                      <td className="py-2 px-4">103-110</td>
+                      <td className="py-2 px-4">118-125</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
+  </div>
   );
 };
 
 export default ProductDetail;
+
