@@ -53,7 +53,24 @@ const ProductDetail = () => {
   const detallesPorId = {
     1: ['Material: Algodón 100%', 'Lavado: Lavar a mano', 'Origen: Argentina'],
     2: ['Material: Algodón 100%', 'Lavado: Lavar a mano', 'Origen: Brasil'],
-    // ... otros detalles
+    3: ['Material: Cuero sintético', 'Lavado: Lavar a mano', 'Origen: Uruguay'],
+    4: ['Material: Algodón 100%', 'Lavado: Lavar a mano', 'Origen: Chile'],
+    5: ['Material: Plata', 'Género: Mujer', 'Estilo: Ajustable', 'Peso: 2.3g'],
+    6: ['Material: Plata y Oro', 'Género: Mujer', 'Diámetro: 4 cm', 'Peso: 2.2g'],
+    7: ['Material: Diamante Blanco', 'Género: Mujer', 'Ancho: 3mm', 'Grosor: 1mm', 'Peso: 2.5g'],
+    8: ['Material: Acero inoxidable', 'Género: Mujer', 'Largo x Ancho 5 cm x 1.6mm'],
+    9: ['Marca: WD Elements', 'Color: Negro', 'Modelo: Externo', 'Capacidad: 2TB', 'Velocidad: 5900 rpm', 'Dimensiones: 7.8cm x 1.4cm', 'Peso: 150g'],
+    10: ['Marca: SanDisk', 'Color: Negro', 'Modelo: Interno', 'Capacidad: 1TB', 'Velocidad: 5400 rpm', 'Dimensiones: 4.8cm x 1.1cm', 'Peso: 120g'],
+    11: ['Marca: Silicon Power', 'Color: Negro', 'Modelo: Interno', 'Capacidad: 256GB', 'Velocidad: 5400 rpm', 'Dimensiones: 4.8cm x 1.1cm', 'Peso: 120g'],
+    12: ['Marca: WD', 'Color: Negro', 'Modelo: Externo', 'Capacidad: 4TB', 'Velocidad: 5400 rpm', 'Dimensiones: 4.8cm x 1cm', 'Peso: 100g'],
+    13: ['Marca: Acer', 'Color: Negro', 'Voltaje: 220V', 'Pantalla: 1920 x 1080', 'Resolución: Full HD', 'Frecuencia: 75Hz', 'Tiempo de respuesta: 1ms', 'Peso: 3kg'],
+    14: ['Marca: Samsung', 'Color: Negro', 'Voltaje: 220V', 'Pantalla: 3840 x 1080', 'Resolución: Full HD', 'Frecuencia: 144Hz', 'Tiempo de respuesta: 1ms', 'Peso: 5kg'],
+    15: ['Material: Poliéster 100%', 'Lavado: Lavar a mano', 'Origen: EEUU'],
+    16: ['Material: Poliéster 75% y Algodón 25%', 'Lavado: Lavar a mano, No planchar', 'Origen: Argentina'],
+    17: ['Material: Poliéster 75% y Algodón 25%', 'Lavado: Lavar a mano, No planchar', 'Origen: Argentina'],
+    18: ['Material: Rayón 95% y Spandex 5%', 'Lavado: Lavar a mano', 'Origen: EEUU'],
+    19: ['Material: Poliéster 100%', 'Lavado: Lavado a lavarropas', 'Origen: Argentina'],
+    20: ['Material: Algodón 95% y Spandex 5%', 'Lavado: Lavado a lavarropas', 'Origen: Argentina'],
   };
 
   const obtenerDetalles = () => {
