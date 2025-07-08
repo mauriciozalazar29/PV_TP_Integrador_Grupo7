@@ -26,11 +26,6 @@ const ProductCard = ({ product }) => {
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
     dispatch(toggleFavorite(product.id));
-    if (!isFav) {
-      toast.success('Producto agregado a favoritos');
-    } else {
-      toast.info('Producto quitado de favoritos');
-    }
   };
 
   return (
